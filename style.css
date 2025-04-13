@@ -86,3 +86,35 @@ pre, p {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+.bank-block {
+  background: rgba(100, 100, 0, 0.15);
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+.bank-form input {
+  padding: 8px;
+  margin-right: 10px;
+  font-size: 14px;
+}
+.bank-form button {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+#bankList {
+  margin-top: 15px;
+  list-style: none;
+  padding-left: 0;
+}
+#bankList li {
+  padding: 6px 10px;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.bank-remove {
+  color: red;
+  cursor: pointer;
+}

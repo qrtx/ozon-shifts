@@ -289,3 +289,45 @@ function renderSummary() {
   summaryDiv.innerHTML += "</div>";
   summaryDiv.style.display = "block";
 }
+
+
+function submitBankInfo() {
+  const phone = document.getElementById("bankPhone").value.trim();
+  const bank = document.getElementById("bankName").value.trim();
+  if (!phone || !bank) return alert("Заполните оба поля");
+  const employee = document.getElementById("bankEmployee").value;
+  db.ref("bank").push(`${employee}: ${phone} - ${bank}`);
+  document.getElementById("bankPhone").value = '';
+  document.getElementById("bankName").value = '';
+}
+
+function removeBankEntry(id) {
+  db.ref("bank/" + id).remove();
+}
+
+function loadBankList() {
+  db.ref("bank").on("value", snap => {
+    const ul = document.getElementById("bankList");
+    ul.innerHTML = "";
+    snap.forEach(child => {
+      const li = document.createElement("li");
+      li.innerHTML = `${child.val()} <span class="bank-remove" onclick="removeBankEntry('${child.key}')">×</span>`;
+      ul.appendChild(li);
+    });
+  });
+}
+
+loadBankList();
+
+function updateBankEmployeeDropdown() {
+  db.ref("employees").once("value", snap => {
+    const sel = document.getElementById("bankEmployee");
+    if (!sel) return;
+    sel.innerHTML = "";
+    snap.forEach(child => {
+      sel.innerHTML += `<option>${child.val()}</option>`;
+    });
+  });
+}
+
+updateBankEmployeeDropdown();
