@@ -49,7 +49,14 @@ function removeEntry(id) {
   if (confirm("Удалить смену?")) firebase.database().ref("shifts/" + id).remove();
 }
 
+
 function renderCalendar() {
+  if (!points || Object.keys(points).length === 0) {
+    console.warn("Points not loaded yet, delaying renderCalendar");
+    setTimeout(renderCalendar, 200);
+    return;
+  }
+
   const container = document.getElementById("calendar");
   const now = new Date();
   const isToday = (y, m, d) => y === now.getFullYear() && m === now.getMonth() && d === now.getDate();
@@ -82,47 +89,6 @@ function renderCalendar() {
 }
 
 function renderSummary() {
-  const summaryA = {}, summaryB = {}, countA = {}, countB = {};
-
-  for (const id in allData) {
-    const x = allData[id];
-    const [y, m, d] = x.date.split("-").map(n => parseInt(n));
-    const name = x.employee;
-    const rate = points[x.point] || 0;
-
-    if (!summaryA[name]) summaryA[name] = 0;
-    if (!summaryB[name]) summaryB[name] = 0;
-    if (!countA[name]) countA[name] = 0;
-    if (!countB[name]) countB[name] = 0;
-
-    if (d >= 11 && d <= 25) {
-      summaryA[name] += rate;
-      countA[name]++;
-    } else {
-      summaryB[name] += rate;
-      countB[name]++;
-    }
-  }
-
-  const summaryDiv = document.getElementById("summary");
-  summaryDiv.innerHTML = "<h3>💰 Расчёт зарплат:</h3><div style='display:flex;gap:50px;flex-wrap:wrap;'>";
-
-  for (const name of Object.keys({...summaryA, ...summaryB})) {
-    const a = summaryA[name] || 0;
-    const b = summaryB[name] || 0;
-    const ca = countA[name] || 0;
-    const cb = countB[name] || 0;
-    summaryDiv.innerHTML += `<div><strong>${name}</strong><br>11–25: ${a}₽ (${ca} смен)<br>26–10: ${b}₽ (${cb} смен)</div>`;
-
-    // сохраняем в Firebase
-    firebase.database().ref("summary/" + name).set({
-      "11_25": { count: ca, total: a },
-      "26_10": { count: cb, total: b }
-    });
-  }
-
-  summaryDiv.innerHTML += "</div>";
-}
   const summaryA = {}, summaryB = {}, countA = {}, countB = {};
   for (const id in allData) {
     const x = allData[id];
