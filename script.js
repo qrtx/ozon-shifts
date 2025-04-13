@@ -76,6 +76,34 @@ let isAdmin = false;
 let employees = [];
 let points = {};
 
+
+  function refreshData() {
+    dataReady.points = false;
+    dataReady.shifts = false;
+
+    firebase.database().ref("points").once("value", snap => {
+      points = snap.val() || {};
+      dataReady.points = true;
+      tryRender();
+    });
+
+    firebase.database().ref("shifts").once("value", snap => {
+      allData = snap.val() || {};
+      dataReady.shifts = true;
+      tryRender();
+    });
+
+    firebase.database().ref("employees").once("value", snap => {
+      const sel = document.getElementById("employee");
+      sel.innerHTML = "";
+      snap.forEach(child => {
+        sel.innerHTML += `<option>${child.val()}</option>`;
+      });
+    });
+
+    alert("✅ Данные обновлены!");
+  }
+
 function toggleAdminLogin() {
   const login = prompt("Введите логин:");
   const pass = prompt("Введите пароль:");
@@ -331,31 +359,3 @@ function updateBankEmployeeDropdown() {
 }
 
 updateBankEmployeeDropdown();
-
-function refreshData() {
-  dataReady.points = false;
-  dataReady.shifts = false;
-
-  firebase.database().ref("points").once("value", snap => {
-    points = snap.val() || {};
-    dataReady.points = true;
-    tryRender();
-  });
-
-  firebase.database().ref("shifts").once("value", snap => {
-    allData = snap.val() || {};
-    dataReady.shifts = true;
-    tryRender();
-  });
-
-  firebase.database().ref("employees").once("value", snap => {
-    const sel = document.getElementById("employee");
-    sel.innerHTML = "";
-    snap.forEach(child => {
-      sel.innerHTML += `<option>${child.val()}</option>`;
-    });
-  });
-
-  alert("✅ Данные обновлены!");
-}
-
