@@ -8,9 +8,7 @@ let currentMonth = new Date().getMonth();
 function markShift() {
   const employee = document.getElementById("employee").value;
   const point = document.getElementById("point").value;
-  const now = new Date();
-  const mskDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-  const date = mskDate.getFullYear() + "-" + String(mskDate.getMonth() + 1).padStart(2, "0") + "-" + String(mskDate.getDate()).padStart(2, "0");
+  const date = new Date().toISOString().split("T")[0];
   db.ref("shifts").push({ date, employee, point });
 }
 
@@ -333,31 +331,3 @@ function updateBankEmployeeDropdown() {
 }
 
 updateBankEmployeeDropdown();
-
-function refreshData() {
-  dataReady.points = false;
-  dataReady.shifts = false;
-
-  firebase.database().ref("points").once("value", snap => {
-    points = snap.val() || {};
-    dataReady.points = true;
-    tryRender();
-  });
-
-  firebase.database().ref("shifts").once("value", snap => {
-    allData = snap.val() || {};
-    dataReady.shifts = true;
-    tryRender();
-  });
-
-  firebase.database().ref("employees").once("value", snap => {
-    const sel = document.getElementById("employee");
-    sel.innerHTML = "";
-    snap.forEach(child => {
-      sel.innerHTML += `<option>${child.val()}</option>`;
-    });
-  });
-
-  alert("Данные успешно обновлены!");
-}
-

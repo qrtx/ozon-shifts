@@ -8,9 +8,14 @@
   <link rel="stylesheet" href="style.css?v=43" />
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-  <button onclick="refreshData()" class="refresh-btn">🔄 Обновить базу</button>
 </head>
 <body>
+
+  <!-- КНОПКА: ОБНОВИТЬ БАЗУ -->
+  <div style="position:absolute; top:12px; left:20px;">
+    <button onclick="refreshData()" style="padding:5px 10px; border-radius:4px; background:#444; color:#fff; border:none;">🔄 Обновить базу</button>
+  </div>
+
   <header class="topbar">Учёт смен ОЗОН</header>
   <main class="container">
   <div style="position:absolute; top:12px; right:20px;">
