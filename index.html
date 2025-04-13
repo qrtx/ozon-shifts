@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Учёт смен ОЗОН</title>
+  <link rel="stylesheet" href="style.css?v=43" />
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <header class="topbar">Учёт смен ОЗОН</header>
+  <main class="container">
+  <div style="position:absolute; top:12px; right:20px;">
+    <button onclick="toggleAdminLogin()" style="padding:5px 10px; border-radius:4px; background:#444; color:#fff; border:none;">Админка</button>
+  </div>
+  
+    <div>
+      <label>Добавить пункт: </label>
+      <input id="newPoint" placeholder="Название" />
+      <input id="newRate" placeholder="Зарплата" />
+      <button onclick="addPoint()">Добавить</button>
+      <label style="margin-left:20px;">Удалить:</label>
+      <select id="deletePoint"></select>
+      <button onclick="deletePoint()">Удалить</button>
+    </div>
+  </div>
+    <section class='form-block'>
+      <select id='employee'>
+        <option>Сергей З.</option><option>Сергей Ш.</option><option>Арина</option><option>Андрей</option>
+        <option>Валера</option><option>Даша</option><option>Ростислав</option><option>Алексей</option><option>Саня</option>
+      </select>
+      <select id='point'>
+        <option value='МО_ХИМКИ_89'>МО_ХИМКИ_89 (2666₽)</option>
+        <option value='ХИМКИ_241'>ХИМКИ_241 (2000₽)</option>
+      </select>
+      <button onclick='markShift()'>Отметиться</button>
+    </section>
+    <section id='calendar'></section>
+
+    <section class='rules-block'>
+      <h2>📖 Правила и штрафы</h2>
+      <pre>
+1.1. Нарушение графика — штраф 750₽
+1.2. Несоблюдение чистоты — штраф 500₽
+1.3. Курение в помещении — штраф 750₽
+1.4. Не принятие перевозки вовремя — штраф 500₽
+1.5. Неопрятный вид — штраф 500₽
+1.6. Публикация брендирования — 500₽, при отказе двойной
+1.7. Второй сотрудник без уведомления — 500₽
+1.8. Грубость клиенту — 750₽
+1.9. Посторонние лица — 750₽
+2.1. Несвоевременная инфа — 500₽
+2.2. Присутствие после 23:59 — 500₽
+2.3. Приём тары без согласования — 500₽
+      </pre>
+    </section>
+
+    <section class='contacts-block'>
+      <h2>📇 Контакты</h2>
+      <p><strong>Администратор:</strong> Сергей — <a href="https://t.me/sergeiseveroff" target="_blank">@sergeiseveroff</a></p>
+      <p><strong>Руководитель:</strong> Андрей — <a href="https://t.me/qwertyxyry" target="_blank">@qwertyxyry</a></p>
+    </section>
+  <div id="adminPanel" class="admin-panel" style="display:none;">
+    <h3>⚙️ Управление сотрудниками и пунктами</h3>
+    <div>
+      <label>Добавить сотрудника: </label>
+      <input id="newEmp" placeholder="Имя" />
+      <button onclick="addEmployee()">Добавить</button>
+      <label style="margin-left:20px;">Удалить:</label>
+      <select id="deleteEmp"></select>
+      <button onclick="deleteEmployee()">Удалить</button>
+    </div>
+</main>
+
+  <footer class="footer">
+    Сделано в 2025 году — <strong>@qwertyxyry</strong> и <strong>@fox-dev-girl</strong>
+  </footer>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBx7N43Wpf0Ohh6197YLlv-ppeHHaJq_TQ",
+      authDomain: "ozon-shifts.firebaseapp.com",
+      databaseURL: "https://ozon-shifts-default-rtdb.firebaseio.com",
+      projectId: "ozon-shifts",
+      storageBucket: "ozon-shifts.firebasestorage.app",
+      messagingSenderId: "60204010303",
+      appId: "1:60204010303:web:09997f126723460335618a"
+    };
+  </script>
+  <script src="script.js?v=43"></script>
+</body>
+</html>
