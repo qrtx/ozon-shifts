@@ -105,4 +105,4 @@ function renderCalendar()
 loadPage('main');
 
 
-document.addEventListener('DOMContentLoaded', renderMain);
+window.onload = renderMain;
