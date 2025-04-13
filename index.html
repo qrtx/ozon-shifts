@@ -4,47 +4,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Смены ОЗОН</title>
+  <title>Учёт смен ОЗОН</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>📦 Учёт смен ОЗОН</h1>
-    <div class="form">
-      <select id="employee">
-        <option value="Сергей З.">Сергей З.</option>
-        <option value="Сергей Ш.">Сергей Ш.</option>
-        <option value="Арина">Арина</option>
-        <option value="Андрей">Андрей</option>
-        <option value="Валера">Валера</option>
-        <option value="Даша">Даша</option>
-        <option value="Ростислав">Ростислав</option>
-        <option value="Алексей">Алексей</option>
-        <option value="Саня">Саня</option>
-      </select>
-      <select id="point">
-        <option value="МО_ХИМКИ_89">МО_ХИМКИ_89 (2666₽)</option>
-        <option value="ХИМКИ_241">ХИМКИ_241 (2000₽)</option>
-      </select>
-      <button onclick="markShift()">Отметиться</button>
-    </div>
-    <div id="calendar"></div>
-    <div id="totals"></div>
+  <div class="app">
+    <aside class="sidebar">
+      <h2>ОЗОН</h2>
+      <nav>
+        <a href="#" onclick="loadPage('main')">📅 Учёт смен</a>
+        <a href="#" onclick="loadPage('rules')">📖 Правила и штрафы</a>
+        <a href="#" onclick="loadPage('contacts')">📇 Контакты</a>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">Учёт смен ОЗОН</header>
+      <section id="content"><!-- динамический контент --></section>
+    </main>
   </div>
   <script>
-    
-const firebaseConfig = {
-  apiKey: "AIzaSyBx7N43Wpf0Ohh6197YLlv-ppeHHaJq_TQ",
-  authDomain: "ozon-shifts.firebaseapp.com",
-  databaseURL: "https://ozon-shifts-default-rtdb.firebaseio.com",
-  projectId: "ozon-shifts",
-  storageBucket: "ozon-shifts.firebasestorage.app",
-  messagingSenderId: "60204010303",
-  appId: "1:60204010303:web:09997f126723460335618a"
-};
-
+    const firebaseConfig = {
+      apiKey: "AIzaSyBx7N43Wpf0Ohh6197YLlv-ppeHHaJq_TQ",
+      authDomain: "ozon-shifts.firebaseapp.com",
+      databaseURL: "https://ozon-shifts-default-rtdb.firebaseio.com",
+      projectId: "ozon-shifts",
+      storageBucket: "ozon-shifts.firebasestorage.app",
+      messagingSenderId: "60204010303",
+      appId: "1:60204010303:web:09997f126723460335618a"
+    };
   </script>
   <script src="script.js"></script>
 </body>
