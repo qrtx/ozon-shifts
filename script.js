@@ -24,9 +24,15 @@ function changeMonth(offset) {
   renderCalendar();
 }
 
+
 function removeEntry(id) {
+  if (!isAdmin) {
+    alert("Удаление смен доступно только администратору.");
+    return;
+  }
   if (confirm("Удалить эту смену?")) db.ref("shifts/" + id).remove();
 }
+
 
 function renderCalendar() {
   const container = document.getElementById("calendar");
@@ -91,10 +97,15 @@ function checkAdmin() {
   }
 }
 
+
 function removeEntry(id) {
-  if (!isAdmin) return alert("Удаление только для админа!");
-  if (confirm("Удалить смену?")) db.ref("shifts/" + id).remove();
+  if (!isAdmin) {
+    alert("Удаление смен доступно только администратору.");
+    return;
+  }
+  if (confirm("Удалить эту смену?")) db.ref("shifts/" + id).remove();
 }
+
 
 // EMPLOYEES
 function addEmployee() {

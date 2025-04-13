@@ -62,17 +62,29 @@
       <p><strong>Администратор:</strong> Сергей — <a href="https://t.me/sergeiseveroff" target="_blank">@sergeiseveroff</a></p>
       <p><strong>Руководитель:</strong> Андрей — <a href="https://t.me/qwertyxyry" target="_blank">@qwertyxyry</a></p>
     </section>
-  <div id="adminPanel" class="admin-panel" style="display:none;" style="display:none;">
-    <h3>⚙️ Управление сотрудниками и пунктами</h3>
-    <div>
-      <label>Добавить сотрудника: </label>
-      <input id="newEmp" placeholder="Имя" />
-      <button onclick="addEmployee()">Добавить</button>
-      <label style="margin-left:20px;">Удалить:</label>
-      <select id="deleteEmp"></select>
-      <button onclick="deleteEmployee()">Удалить</button>
-    </div>
+  
+<div id="adminPanel" class="admin-panel" style="display:none;">
+  <h3>⚙️ Управление сотрудниками и пунктами</h3>
+  <div>
+    <label>Добавить сотрудника: </label>
+    <input id="newEmp" placeholder="Имя" />
+    <button onclick="addEmployee()">Добавить</button>
+    <label style="margin-left:20px;">Удалить:</label>
+    <select id="deleteEmp"></select>
+    <button onclick="deleteEmployee()">Удалить</button>
+  </div>
+  <div>
+    <label>Добавить пункт: </label>
+    <input id="newPoint" placeholder="Название" />
+    <input id="newRate" placeholder="Зарплата" />
+    <button onclick="addPoint()">Добавить</button>
+    <label style="margin-left:20px;">Удалить:</label>
+    <select id="deletePoint"></select>
+    <button onclick="deletePoint()">Удалить</button>
+  </div>
+</div>
 </main>
+
 
   <footer class="footer">
     Сделано в 2025 году — <strong>@qwertyxyry</strong> и <strong>@fox-dev-girl</strong>
