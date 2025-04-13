@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Учёт смен ОЗОН</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2>ОЗОН</h2>
+      <nav>
+        <a href="#" onclick="loadPage('main')">📅 Учёт смен</a>
+        <a href="#" onclick="loadPage('rules')">📖 Правила и штрафы</a>
+        <a href="#" onclick="loadPage('contacts')">📇 Контакты</a>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <button class='toggle-btn' onclick='toggleSidebar()'>☰</button><header class="topbar">Учёт смен ОЗОН</header>
+      <section id="content"><!-- динамический контент --></section>
+<footer style="text-align:center; margin-top:20px; color:#888; font-size:13px">
+  Сделано в 2025 году — <strong>@qwertyxyry</strong> и <strong>@fox-dev-girl</strong>
+</footer>
+
+    </main>
+  </div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBx7N43Wpf0Ohh6197YLlv-ppeHHaJq_TQ",
+      authDomain: "ozon-shifts.firebaseapp.com",
+      databaseURL: "https://ozon-shifts-default-rtdb.firebaseio.com",
+      projectId: "ozon-shifts",
+      storageBucket: "ozon-shifts.firebasestorage.app",
+      messagingSenderId: "60204010303",
+      appId: "1:60204010303:web:09997f126723460335618a"
+    };
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
