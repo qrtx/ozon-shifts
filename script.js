@@ -64,3 +64,78 @@ db.ref("shifts").on("value", snap => {
 });
 
 window.onload = renderCalendar;
+
+
+let isAdmin = false;
+
+function toggleAdminLogin() {
+  const modal = document.getElementById("adminModal");
+  modal.style.display = modal.style.display === "none" ? "flex" : "none";
+}
+
+function adminLogin() {
+  const login = document.getElementById("login").value;
+  const password = document.getElementById("password").value;
+  if (login === "qwertyxyry" && password === "Qrtx1234") {
+    isAdmin = true;
+    localStorage.setItem("ozon_is_admin", "true");
+    toggleAdminLogin();
+    renderCalendar();
+    renderAdminPanel();
+  } else {
+    alert("Неверные данные");
+  }
+}
+
+function checkAdmin() {
+  isAdmin = localStorage.getItem("ozon_is_admin") === "true";
+}
+
+function removeEntry(id) {
+  if (!isAdmin) return alert("Удаление доступно только администратору");
+  if (confirm("Удалить эту смену?")) db.ref("shifts/" + id).remove();
+}
+
+function renderAdminPanel() {
+  const container = document.createElement("div");
+  container.className = "admin-panel";
+  container.innerHTML = `
+    <h3>⚙️ Управление сотрудниками и пунктами</h3>
+    <div>
+      <label>Добавить сотрудника: </label>
+      <input id="newEmp" placeholder="Имя" />
+      <button onclick="addEmployee()">Добавить</button>
+    </div>
+    <div>
+      <label>Добавить пункт: </label>
+      <input id="newPoint" placeholder="Название" />
+      <input id="newRate" placeholder="Зарплата" />
+      <button onclick="addPoint()">Добавить</button>
+    </div>
+  `;
+  document.body.appendChild(container);
+}
+
+function addEmployee() {
+  const emp = document.getElementById("newEmp").value.trim();
+  if (!emp) return;
+  const sel = document.getElementById("employee");
+  const opt = document.createElement("option");
+  opt.value = opt.innerText = emp;
+  sel.appendChild(opt);
+  alert("Сотрудник добавлен");
+}
+
+function addPoint() {
+  const name = document.getElementById("newPoint").value.trim();
+  const rate = parseInt(document.getElementById("newRate").value.trim());
+  if (!name || !rate) return;
+  const sel = document.getElementById("point");
+  const opt = document.createElement("option");
+  opt.value = name;
+  opt.innerText = name + " (" + rate + "₽)";
+  sel.appendChild(opt);
+  alert("Пункт добавлен");
+}
+
+checkAdmin();
