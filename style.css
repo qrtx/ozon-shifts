@@ -71,18 +71,12 @@ button:hover {
 }
 
 .admin-panel {
-  margin-top: 40px;
   background: #1a1a1a;
   padding: 20px;
   border-radius: 10px;
+  margin-top: 20px;
 }
-.admin-panel h3 {
-  margin-bottom: 10px;
-}
-.admin-panel input {
+.admin-panel input, .admin-panel select {
   padding: 6px;
-  margin: 4px;
-}
-.admin-panel button {
   margin: 4px;
 }

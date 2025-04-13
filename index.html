@@ -10,11 +10,28 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <div style="position:absolute; top:12px; right:20px;">
-      <button onclick="toggleAdminLogin()" style="padding:5px 10px; border-radius:4px; background:#444; color:#fff; border:none;">Админка</button>
-    </div>Учёт смен ОЗОН</header>
+  <header class="topbar">Учёт смен ОЗОН</header>
   <main class="container">
+  <div id="adminPanel" class="admin-panel" style="display:none;">
+    <h3>⚙️ Управление сотрудниками и пунктами</h3>
+    <div>
+      <label>Добавить сотрудника: </label>
+      <input id="newEmp" placeholder="Имя" />
+      <button onclick="addEmployee()">Добавить</button>
+      <label style="margin-left:20px;">Удалить:</label>
+      <select id="deleteEmp"></select>
+      <button onclick="deleteEmployee()">Удалить</button>
+    </div>
+    <div>
+      <label>Добавить пункт: </label>
+      <input id="newPoint" placeholder="Название" />
+      <input id="newRate" placeholder="Зарплата" />
+      <button onclick="addPoint()">Добавить</button>
+      <label style="margin-left:20px;">Удалить:</label>
+      <select id="deletePoint"></select>
+      <button onclick="deletePoint()">Удалить</button>
+    </div>
+  </div>
     <section class='form-block'>
       <select id='employee'>
         <option>Сергей З.</option><option>Сергей Ш.</option><option>Арина</option><option>Андрей</option>
@@ -51,18 +68,7 @@
       <p><strong>Администратор:</strong> Сергей — <a href="https://t.me/sergeiseveroff" target="_blank">@sergeiseveroff</a></p>
       <p><strong>Руководитель:</strong> Андрей — <a href="https://t.me/qwertyxyry" target="_blank">@qwertyxyry</a></p>
     </section>
-  
-<div id="adminModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0009; justify-content:center; align-items:center;">
-  <div style="background:#222; padding:20px; border-radius:8px; width:300px;">
-    <h3>Вход в админку</h3>
-    <input id="login" placeholder="Логин" style="width:100%; margin-bottom:10px; padding:8px;" />
-    <input id="password" type="password" placeholder="Пароль" style="width:100%; margin-bottom:10px; padding:8px;" />
-    <button onclick="adminLogin()">Войти</button>
-    <button onclick="toggleAdminLogin()" style="float:right;">Отмена</button>
-  </div>
-</div>
-
-</main>
+  </main>
 
   <footer class="footer">
     Сделано в 2025 году — <strong>@qwertyxyry</strong> и <strong>@fox-dev-girl</strong>

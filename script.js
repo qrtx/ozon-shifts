@@ -67,75 +67,86 @@ window.onload = renderCalendar;
 
 
 let isAdmin = false;
+let employees = [];
+let points = {};
 
 function toggleAdminLogin() {
-  const modal = document.getElementById("adminModal");
-  modal.style.display = modal.style.display === "none" ? "flex" : "none";
-}
-
-function adminLogin() {
-  const login = document.getElementById("login").value;
-  const password = document.getElementById("password").value;
-  if (login === "qwertyxyry" && password === "Qrtx1234") {
+  const login = prompt("Введите логин:");
+  const pass = prompt("Введите пароль:");
+  if (login === "qwertyxyry" && pass === "Qrtx1234") {
     isAdmin = true;
     localStorage.setItem("ozon_is_admin", "true");
-    toggleAdminLogin();
-    renderCalendar();
-    renderAdminPanel();
-  } else {
-    alert("Неверные данные");
+    document.getElementById("adminPanel").style.display = "block";
   }
 }
 
 function checkAdmin() {
   isAdmin = localStorage.getItem("ozon_is_admin") === "true";
+  if (isAdmin && document.getElementById("adminPanel")) {
+    document.getElementById("adminPanel").style.display = "block";
+  }
 }
 
 function removeEntry(id) {
-  if (!isAdmin) return alert("Удаление доступно только администратору");
-  if (confirm("Удалить эту смену?")) db.ref("shifts/" + id).remove();
+  if (!isAdmin) return alert("Удаление только для админа!");
+  if (confirm("Удалить смену?")) db.ref("shifts/" + id).remove();
 }
 
-function renderAdminPanel() {
-  const container = document.createElement("div");
-  container.className = "admin-panel";
-  container.innerHTML = `
-    <h3>⚙️ Управление сотрудниками и пунктами</h3>
-    <div>
-      <label>Добавить сотрудника: </label>
-      <input id="newEmp" placeholder="Имя" />
-      <button onclick="addEmployee()">Добавить</button>
-    </div>
-    <div>
-      <label>Добавить пункт: </label>
-      <input id="newPoint" placeholder="Название" />
-      <input id="newRate" placeholder="Зарплата" />
-      <button onclick="addPoint()">Добавить</button>
-    </div>
-  `;
-  document.body.appendChild(container);
-}
-
+// EMPLOYEES
 function addEmployee() {
-  const emp = document.getElementById("newEmp").value.trim();
-  if (!emp) return;
-  const sel = document.getElementById("employee");
-  const opt = document.createElement("option");
-  opt.value = opt.innerText = emp;
-  sel.appendChild(opt);
-  alert("Сотрудник добавлен");
+  const name = document.getElementById("newEmp").value.trim();
+  if (!name) return;
+  db.ref("employees").push(name);
 }
 
+function deleteEmployee() {
+  const name = document.getElementById("deleteEmp").value;
+  db.ref("employees").once("value", snap => {
+    snap.forEach(child => {
+      if (child.val() === name) db.ref("employees/" + child.key).remove();
+    });
+  });
+}
+
+// POINTS
 function addPoint() {
   const name = document.getElementById("newPoint").value.trim();
   const rate = parseInt(document.getElementById("newRate").value.trim());
   if (!name || !rate) return;
-  const sel = document.getElementById("point");
-  const opt = document.createElement("option");
-  opt.value = name;
-  opt.innerText = name + " (" + rate + "₽)";
-  sel.appendChild(opt);
-  alert("Пункт добавлен");
+  db.ref("points/" + name).set(rate);
 }
 
+function deletePoint() {
+  const name = document.getElementById("deletePoint").value;
+  db.ref("points/" + name).remove();
+}
+
+// LOAD DATA
+function loadEmployeesAndPoints() {
+  db.ref("employees").on("value", snap => {
+    employees = [];
+    const sel = document.getElementById("employee");
+    const del = document.getElementById("deleteEmp");
+    sel.innerHTML = del.innerHTML = "";
+    snap.forEach(child => {
+      employees.push(child.val());
+      sel.innerHTML += `<option>${child.val()}</option>`;
+      del.innerHTML += `<option>${child.val()}</option>`;
+    });
+  });
+
+  db.ref("points").on("value", snap => {
+    points = snap.val() || {};
+    const sel = document.getElementById("point");
+    const del = document.getElementById("deletePoint");
+    sel.innerHTML = del.innerHTML = "";
+    for (const name in points) {
+      sel.innerHTML += `<option value="${name}">${name} (${points[name]}₽)</option>`;
+      del.innerHTML += `<option value="${name}">${name}</option>`;
+    }
+  });
+}
+
+// INIT
+loadEmployeesAndPoints();
 checkAdmin();
