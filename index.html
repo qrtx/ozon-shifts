@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Учёт смен - ОЗОН (Supabase)</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+  <h1>Учёт смен сотрудников</h1>
+  <div id="form">
+    <label for="employee">Сотрудник:</label>
+    <select id="employee">
+      <option value="Сергей З.">Сергей З.</option>
+      <option value="Сергей Ш.">Сергей Ш.</option>
+      <option value="Арина">Арина</option>
+      <option value="Андрей">Андрей</option>
+      <option value="Валера">Валера</option>
+      <option value="Даша">Даша</option>
+      <option value="Ростислав">Ростислав</option>
+      <option value="Алексей">Алексей</option>
+      <option value="Саня">Саня</option>
+    </select>
+    <label for="point">Пункт выдачи:</label>
+    <select id="point">
+      <option value="МО_ХИМКИ_89">МО_ХИМКИ_89 (2666₽)</option>
+      <option value="ХИМКИ_241">ХИМКИ_241 (2000₽)</option>
+    </select>
+    <button onclick="markShift()">Отметиться</button>
+  </div>
+  <div id="calendar"></div>
+  <div id="summary">
+    <h2>Итоги:</h2>
+    <div id="totals"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

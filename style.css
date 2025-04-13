@@ -1,0 +1,18 @@
+
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background: #f0f0f0;
+}
+#form {
+  margin-bottom: 20px;
+}
+#calendar {
+  margin-top: 20px;
+}
+.day {
+  padding: 10px;
+  background: white;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
