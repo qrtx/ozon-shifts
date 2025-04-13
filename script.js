@@ -8,7 +8,7 @@ let currentMonth = new Date().getMonth();
 function markShift() {
   const employee = document.getElementById("employee").value;
   const point = document.getElementById("point").value;
-  const date = new Date().toISOString().split("T")[0];
+  const date = new Date(now.getTime() + 3 * 60 * 60 * 1000).toISOString().slice(0, 10);
   db.ref("shifts").push({ date, employee, point });
 }
 
