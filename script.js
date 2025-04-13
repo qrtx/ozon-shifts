@@ -111,6 +111,7 @@ function deleteEmployee() {
 
 // POINTS
 function addPoint() {
+  if (!isAdmin) return alert("Только для администратора!");
   const name = document.getElementById("newPoint").value.trim();
   const rate = parseInt(document.getElementById("newRate").value.trim());
   if (!name || !rate) return;
@@ -118,6 +119,7 @@ function addPoint() {
 }
 
 function deletePoint() {
+  if (!isAdmin) return alert("Только для администратора!");
   const name = document.getElementById("deletePoint").value;
   db.ref("points/" + name).remove();
 }
