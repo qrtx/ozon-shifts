@@ -84,6 +84,7 @@ function checkAdmin() {
   isAdmin = localStorage.getItem("ozon_is_admin") === "true";
   if (isAdmin && document.getElementById("adminPanel")) {
     document.getElementById("adminPanel").style.display = "block";
+    document.getElementById("adminPanel").style.display = "block";
   }
 }
 
