@@ -1,3 +1,7 @@
+let sidebarVisible = true;
+function toggleSidebar() {
+  document.querySelector('.sidebar').classList.toggle('collapsed');
+}
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -45,9 +49,30 @@ function removeEntry(id) {
   if (confirm("Удалить эту смену?")) db.ref("shifts/" + id).remove();
 }
 
-function renderCalendar() {
+
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth();
+
+function changeMonth(offset) {
+  currentMonth += offset;
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  } else if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
+  }
+  renderCalendar();
+}
+
+function renderCalendar()
+ {
   const container = document.getElementById("calendar");
+  
   const now = new Date();
+  const isToday = (y, m, d) => y === now.getFullYear() && m === now.getMonth() && d === now.getDate();
+  const year = currentYear, month = currentMonth;
+
   const year = now.getFullYear(), month = now.getMonth();
   const first = new Date(year, month, 1);
   const last = new Date(year, month + 1, 0);
@@ -66,7 +91,15 @@ function renderCalendar() {
   }
 
   html += "</div>";
-  container.innerHTML = html;
+  
+  const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  container.innerHTML = `
+    <div style='margin-bottom:10px; display:flex; justify-content:space-between; align-items:center'>
+      <button onclick='changeMonth(-1)'>&lt; Назад</button>
+      <strong>${monthNames[month]} ${year}</strong>
+      <button onclick='changeMonth(1)'>Вперёд &gt;</button>
+    </div>` + html;
+
 }
 
 loadPage('main');
