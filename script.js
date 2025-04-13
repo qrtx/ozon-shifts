@@ -238,18 +238,18 @@ function adminLogout() {
 function addPoint() {
   const name = document.getElementById("newPoint").value.trim();
   const rate = parseInt(document.getElementById("newRate").value.trim());
-  if (!name || !rate || !isAdmin) return;
+  if (!name || !rate) return;
   db.ref("points/" + name).set(rate);
 }
 
 function deletePoint() {
   const name = document.getElementById("deletePoint").value;
-  if (!isAdmin) return;
+  
   db.ref("points/" + name).remove();
 }
 
 function renderSummary() {
-  if (!isAdmin) return;
+  
 
   const summaryA = {}, summaryB = {}, countA = {}, countB = {};
   const today = new Date();
