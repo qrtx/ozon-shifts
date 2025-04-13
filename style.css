@@ -1,63 +1,90 @@
 
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #111;
+  font-family: 'Segoe UI', sans-serif;
+  background: #121212;
   color: #fff;
 }
-
 .topbar {
-  background: #002244dd;
-  padding: 10px 20px;
+  background: rgba(0, 20, 50, 0.9);
+  padding: 15px;
   font-size: 20px;
   font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  text-align: center;
 }
-
 .container {
   padding: 20px;
-  max-width: 1000px;
-  margin: auto;
 }
-
+select, button {
+  padding: 10px;
+  font-size: 14px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+button:hover {
+  background: #0056b3;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 5px;
 }
-
 .day-cell {
-  background: #1c1c2b;
-  padding: 5px;
-  border-radius: 8px;
+  background: #1f1f2f;
+  padding: 10px;
+  border-radius: 6px;
   min-height: 80px;
-  font-size: 13px;
+  font-size: 14px;
+  position: relative;
 }
-
 .today {
-  outline: 2px solid #00bfff;
+  border: 2px solid #00aaff;
 }
-
 .remove-btn {
   color: red;
-  font-weight: bold;
   cursor: pointer;
+  float: right;
 }
-
 .rules-block {
-  background: #2c2c3b;
+  background: rgba(100, 0, 0, 0.2);
+  padding: 20px;
+  margin-top: 40px;
+  border-radius: 10px;
+}
+.contacts-block {
+  background: rgba(0, 100, 0, 0.2);
   padding: 20px;
   margin-top: 20px;
   border-radius: 10px;
 }
+.footer {
+  text-align: center;
+  margin: 30px;
+  font-size: 13px;
+  color: #888;
+}
 
-.contacts-block {
-  background: rgba(0,100,0,0.15);
+.admin-panel {
+  background: #1a1a1a;
   padding: 20px;
-  margin-top: 20px;
   border-radius: 10px;
+  margin-top: 20px;
+}
+.admin-panel input, .admin-panel select {
+  padding: 6px;
+  margin: 4px;
+}
+
+pre, p {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .bank-block {
@@ -66,8 +93,7 @@ body {
   margin-top: 20px;
   border-radius: 10px;
 }
-
-.bank-form input, .bank-form select {
+.bank-form input {
   padding: 8px;
   margin-right: 10px;
   font-size: 14px;
@@ -91,26 +117,4 @@ body {
 .bank-remove {
   color: red;
   cursor: pointer;
-}
-.admin-panel {
-  background: #1a1a1a;
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-.admin-panel input, .admin-panel select {
-  padding: 6px;
-  margin: 4px;
-}
-.footer {
-  padding: 20px;
-  text-align: center;
-  opacity: 0.6;
-  font-size: 14px;
-}
-
-pre, p {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
