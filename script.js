@@ -77,6 +77,7 @@ function toggleAdminLogin() {
     isAdmin = true;
     localStorage.setItem("ozon_is_admin", "true");
     document.getElementById("adminPanel").style.display = "block";
+      loadEmployeesAndPoints();
   }
 }
 
@@ -84,7 +85,9 @@ function checkAdmin() {
   isAdmin = localStorage.getItem("ozon_is_admin") === "true";
   if (isAdmin && document.getElementById("adminPanel")) {
     document.getElementById("adminPanel").style.display = "block";
+      loadEmployeesAndPoints();
     document.getElementById("adminPanel").style.display = "block";
+      loadEmployeesAndPoints();
   }
 }
 
