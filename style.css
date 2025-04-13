@@ -80,3 +80,9 @@ button:hover {
   padding: 6px;
   margin: 4px;
 }
+
+pre, p {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
