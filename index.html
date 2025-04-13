@@ -16,7 +16,15 @@
     <button onclick="toggleAdminLogin()" style="padding:5px 10px; border-radius:4px; background:#444; color:#fff; border:none;">Админка</button>
   </div>
   
-
+    <div>
+      <label>Добавить пункт: </label>
+      <input id="newPoint" placeholder="Название" />
+      <input id="newRate" placeholder="Зарплата" />
+      <button onclick="addPoint()">Добавить</button>
+      <label style="margin-left:20px;">Удалить:</label>
+      <select id="deletePoint"></select>
+      <button onclick="deletePoint()">Удалить</button>
+    </div>
   </div>
     <section class='form-block'>
       <select id='employee'>
@@ -56,7 +64,7 @@
     </section>
   
 <div id="adminPanel" class="admin-panel" style="display:none;">
-  <h3>⚙️ Управление сотрудниками</h3>
+  <h3>⚙️ Управление сотрудниками и пунктами</h3>
   <div>
     <label>Добавить сотрудника: </label>
     <input id="newEmp" placeholder="Имя" />
@@ -66,9 +74,19 @@
     <button onclick="deleteEmployee()">Удалить</button>
   </div>
   <div style="margin-top:20px;">
+    <label>Добавить пункт: </label>
+    <input id="newPoint" placeholder="Название" />
+    <input id="newRate" placeholder="Зарплата" />
+    <button onclick="addPoint()">Добавить</button>
+    <label style="margin-left:20px;">Удалить:</label>
+    <select id="deletePoint"></select>
+    <button onclick="deletePoint()">Удалить</button>
+  </div>
+  <div style="margin-top:20px;">
     <button onclick="adminLogout()" style="background:#a00;">Выйти из админки</button>
   </div>
 </div>
+<div id="summary" style="display:none;"></div>
 </main>
 
 

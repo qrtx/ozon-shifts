@@ -233,3 +233,59 @@ function adminLogout() {
   alert("Вы вышли из учётки администратора.");
   location.reload();
 }
+
+
+function addPoint() {
+  const name = document.getElementById("newPoint").value.trim();
+  const rate = parseInt(document.getElementById("newRate").value.trim());
+  if (!name || !rate || !isAdmin) return;
+  db.ref("points/" + name).set(rate);
+}
+
+function deletePoint() {
+  const name = document.getElementById("deletePoint").value;
+  if (!isAdmin) return;
+  db.ref("points/" + name).remove();
+}
+
+function renderSummary() {
+  if (!isAdmin) return;
+
+  const summaryA = {}, summaryB = {}, countA = {}, countB = {};
+  const today = new Date();
+
+  for (const id in allData) {
+    const x = allData[id];
+    const [y, m, d] = x.date.split("-").map(n => parseInt(n));
+    const date = new Date(y, m - 1, d);
+    const name = x.employee;
+    const rate = points[x.point] || 0;
+
+    if (!summaryA[name]) summaryA[name] = 0;
+    if (!summaryB[name]) summaryB[name] = 0;
+    if (!countA[name]) countA[name] = 0;
+    if (!countB[name]) countB[name] = 0;
+
+    if (d >= 11 && d <= 25) {
+      summaryA[name] += rate;
+      countA[name]++;
+    } else {
+      summaryB[name] += rate;
+      countB[name]++;
+    }
+  }
+
+  const summaryDiv = document.getElementById("summary");
+  summaryDiv.innerHTML = "<h3>💰 Расчёт зарплат:</h3><div style='display:flex;gap:50px;flex-wrap:wrap;'>";
+
+  for (const name of Object.keys({...summaryA, ...summaryB})) {
+    const a = summaryA[name] || 0;
+    const b = summaryB[name] || 0;
+    const ca = countA[name] || 0;
+    const cb = countB[name] || 0;
+    summaryDiv.innerHTML += `<div><strong>${name}</strong><br>11–25: ${a}₽ (${ca} смен)<br>26–10: ${b}₽ (${cb} смен)</div>`;
+  }
+
+  summaryDiv.innerHTML += "</div>";
+  summaryDiv.style.display = "block";
+}
