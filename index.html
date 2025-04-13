@@ -16,7 +16,15 @@
     <button onclick="toggleAdminLogin()" style="padding:5px 10px; border-radius:4px; background:#444; color:#fff; border:none;">Админка</button>
   </div>
   
-
+    <div>
+      <label>Добавить пункт: </label>
+      <input id="newPoint" placeholder="Название" />
+      <input id="newRate" placeholder="Зарплата" />
+      <button onclick="addPoint()">Добавить</button>
+      <label style="margin-left:20px;">Удалить:</label>
+      <select id="deletePoint"></select>
+      <button onclick="deletePoint()">Удалить</button>
+    </div>
   </div>
     <section class='form-block'>
       <select id='employee'>
@@ -51,7 +59,19 @@
 </section>
 
 
-    <section class='contacts-block'>
+    
+<section class='bank-block'>
+  <h2>💳 Реквизиты для выплаты зарплаты</h2>
+  <div class="bank-form">
+    <select id="bankEmployee"></select>
+    <input id="bankPhone" placeholder="+79999999999" />
+    <input id="bankName" placeholder="Название банка" />
+    <button onclick="submitBankInfo()">Добавить</button>
+  </div>
+  <ul id="bankList"></ul>
+</section>
+
+<section class='contacts-block'>
       <h2>📇 Контакты</h2>
       <p><strong>Администратор:</strong> Сергей — <a href="https://t.me/sergeiseveroff" target="_blank">@sergeiseveroff</a></p>
       <p><strong>Руководитель:</strong> Андрей — <a href="https://t.me/qwertyxyry" target="_blank">@qwertyxyry</a></p>
@@ -68,13 +88,13 @@
     <button onclick="deleteEmployee()">Удалить</button>
   </div>
   <div style="margin-top:20px;">
-      <label>Добавить пункт: </label>
-      <input id="newPoint" placeholder="Название" />
-      <input id="newRate" placeholder="Зарплата" />
-      <button onclick="addPoint()">Добавить</button>
-      <label style="margin-left:20px;">Удалить:</label>
-      <select id="deletePoint"></select>
-      <button onclick="deletePoint()">Удалить</button>
+    <label>Добавить пункт: </label>
+    <input id="newPoint" placeholder="Название" />
+    <input id="newRate" placeholder="Зарплата" />
+    <button onclick="addPoint()">Добавить</button>
+    <label style="margin-left:20px;">Удалить:</label>
+    <select id="deletePoint"></select>
+    <button onclick="deletePoint()">Удалить</button>
   </div>
   <div style="margin-top:20px;">
     <button onclick="adminLogout()" style="background:#a00;">Выйти из админки</button>
