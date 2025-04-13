@@ -1,6 +1,6 @@
 
 // Инициализация Firebase
-const firebaseConfig = {
+var firebaseConfig = {
   apiKey: "AIzaSyBx7N43Wpf0Ohh6197YLlv-ppeHHaJq_TQ",
   authDomain: "ozon-shifts.firebaseapp.com",
   databaseURL: "https://ozon-shifts-default-rtdb.firebaseio.com",
