@@ -124,19 +124,7 @@ function deleteEmployee() {
 }
 
 // POINTS
-function addPoint() {
-  if (!isAdmin) return alert("Только для администратора!");
-  const name = document.getElementById("newPoint").value.trim();
-  const rate = parseInt(document.getElementById("newRate").value.trim());
-  if (!name || !rate) return;
-  db.ref("points/" + name).set(rate);
-}
 
-function deletePoint() {
-  if (!isAdmin) return alert("Только для администратора!");
-  const name = document.getElementById("deletePoint").value;
-  db.ref("points/" + name).remove();
-}
 
 // LOAD DATA
 function loadEmployeesAndPoints() {
@@ -237,3 +225,11 @@ renderCalendar = function () {
   container.innerHTML = html;
   renderSummary();
 };
+
+
+function adminLogout() {
+  isAdmin = false;
+  localStorage.removeItem("ozon_is_admin");
+  alert("Вы вышли из учётки администратора.");
+  location.reload();
+}

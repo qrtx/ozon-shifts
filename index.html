@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Учёт смен ОЗОН</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=43" />
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 </head>
@@ -64,7 +64,7 @@
     </section>
   
 <div id="adminPanel" class="admin-panel" style="display:none;">
-  <h3>⚙️ Управление сотрудниками и пунктами</h3>
+  <h3>⚙️ Управление сотрудниками</h3>
   <div>
     <label>Добавить сотрудника: </label>
     <input id="newEmp" placeholder="Имя" />
@@ -73,14 +73,8 @@
     <select id="deleteEmp"></select>
     <button onclick="deleteEmployee()">Удалить</button>
   </div>
-  <div>
-    <label>Добавить пункт: </label>
-    <input id="newPoint" placeholder="Название" />
-    <input id="newRate" placeholder="Зарплата" />
-    <button onclick="addPoint()">Добавить</button>
-    <label style="margin-left:20px;">Удалить:</label>
-    <select id="deletePoint"></select>
-    <button onclick="deletePoint()">Удалить</button>
+  <div style="margin-top:20px;">
+    <button onclick="adminLogout()" style="background:#a00;">Выйти из админки</button>
   </div>
 </div>
 </main>
