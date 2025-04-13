@@ -151,3 +151,73 @@ function loadEmployeesAndPoints() {
 // INIT
 loadEmployeesAndPoints();
 checkAdmin();
+
+
+function renderSummary() {
+  const summaryA = {}, summaryB = {};
+  const today = new Date();
+  for (const id in allData) {
+    const x = allData[id];
+    const [y, m, d] = x.date.split("-").map(n => parseInt(n));
+    const date = new Date(y, m - 1, d);
+    const name = x.employee;
+    const rate = points[x.point] || 0;
+
+    if (!summaryA[name]) summaryA[name] = 0;
+    if (!summaryB[name]) summaryB[name] = 0;
+
+    if (d >= 11 && d <= 25) summaryA[name] += rate;
+    else summaryB[name] += rate;
+  }
+
+  const summaryDiv = document.createElement("div");
+  summaryDiv.innerHTML = "<h3>💰 Расчёт зарплат:</h3><div style='display:flex;gap:50px;flex-wrap:wrap;'>";
+
+  for (const name of Object.keys({...summaryA, ...summaryB})) {
+    const a = summaryA[name] || 0;
+    const b = summaryB[name] || 0;
+    summaryDiv.innerHTML += `<div><strong>${name}</strong><br>11–25: ${a}₽<br>26–10: ${b}₽</div>`;
+  }
+
+  summaryDiv.innerHTML += "</div>";
+  document.getElementById("summary")?.remove();
+  summaryDiv.id = "summary";
+  document.getElementById("calendar").after(summaryDiv);
+}
+
+// Переопределим renderCalendar
+renderCalendar = function () {
+  const container = document.getElementById("calendar");
+  const now = new Date();
+  const isToday = (y, m, d) => y === now.getFullYear() && m === now.getMonth() && d === now.getDate();
+  const year = currentYear, month = currentMonth;
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+  const daysInMonth = last.getDate();
+
+  let html = "<div style='margin-bottom:10px; display:flex; justify-content:space-between; align-items:center'>"
+    + "<button onclick='changeMonth(-1)'>&lt; Назад</button>"
+    + `<strong>${first.toLocaleString('ru-RU', { month: 'long' })} ${year}</strong>`
+    + "<button onclick='changeMonth(1)'>Вперёд &gt;</button></div>";
+
+  html += "<div class='grid'><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>";
+
+  const weekDay = first.getDay() || 7;
+  html += "<div></div>".repeat(weekDay - 1);
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const day = `${year}-${(month+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+    const shifts = Object.entries(allData).filter(([id, x]) => x.date === day);
+    const todayClass = isToday(year, month, d) ? "today" : "";
+    let inner = `<strong>${d}</strong><br>`;
+    inner += shifts.map(([id, x]) =>
+      `${x.employee} — ${x.point} (${points[x.point] || 0}₽)`
+      + (isAdmin ? ` <span class='remove-btn' onclick='removeEntry("${id}")'>×</span>` : "")
+    ).join("<br>");
+    html += `<div class='day-cell ${todayClass}'>${inner}</div>`;
+  }
+
+  html += "</div>";
+  container.innerHTML = html;
+  renderSummary();
+};

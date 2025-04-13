@@ -12,16 +12,10 @@
 <body>
   <header class="topbar">Учёт смен ОЗОН</header>
   <main class="container">
-  <div id="adminPanel" class="admin-panel" style="display:none;">
-    <h3>⚙️ Управление сотрудниками и пунктами</h3>
-    <div>
-      <label>Добавить сотрудника: </label>
-      <input id="newEmp" placeholder="Имя" />
-      <button onclick="addEmployee()">Добавить</button>
-      <label style="margin-left:20px;">Удалить:</label>
-      <select id="deleteEmp"></select>
-      <button onclick="deleteEmployee()">Удалить</button>
-    </div>
+  <div style="position:absolute; top:12px; right:20px;">
+    <button onclick="toggleAdminLogin()" style="padding:5px 10px; border-radius:4px; background:#444; color:#fff; border:none;">Админка</button>
+  </div>
+  
     <div>
       <label>Добавить пункт: </label>
       <input id="newPoint" placeholder="Название" />
@@ -68,7 +62,17 @@
       <p><strong>Администратор:</strong> Сергей — <a href="https://t.me/sergeiseveroff" target="_blank">@sergeiseveroff</a></p>
       <p><strong>Руководитель:</strong> Андрей — <a href="https://t.me/qwertyxyry" target="_blank">@qwertyxyry</a></p>
     </section>
-  </main>
+  <div id="adminPanel" class="admin-panel" style="display:none;">
+    <h3>⚙️ Управление сотрудниками и пунктами</h3>
+    <div>
+      <label>Добавить сотрудника: </label>
+      <input id="newEmp" placeholder="Имя" />
+      <button onclick="addEmployee()">Добавить</button>
+      <label style="margin-left:20px;">Удалить:</label>
+      <select id="deleteEmp"></select>
+      <button onclick="deleteEmployee()">Удалить</button>
+    </div>
+</main>
 
   <footer class="footer">
     Сделано в 2025 году — <strong>@qwertyxyry</strong> и <strong>@fox-dev-girl</strong>
