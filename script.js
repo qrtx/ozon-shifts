@@ -81,7 +81,7 @@ let points = {};
 function toggleAdminLogin() {
   const login = prompt("Введите логин:");
   const pass = prompt("Введите пароль:");
-  if (login === "qwertyxyry" && pass === "Qrtx1234") {
+  if (login === "qwertyxyry" && pass === "Qrtx5237") {
     isAdmin = true;
     localStorage.setItem("ozon_is_admin", "true");
     document.getElementById("adminPanel").style.display = "block";
