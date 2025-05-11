@@ -8,9 +8,9 @@
   <link rel="stylesheet" href="style.css?v=43" />
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-</head>
+    </head>
 <body>
-  <header class="topbar">Учёт смен ОЗОН</header>
+  <header class="topbar"><span class="version">версия: 1.19</span>Учёт смен ОЗОН</header>
   <main class="container">
   <div style="position:absolute; top:12px; right:20px;">
     <button onclick="toggleAdminLogin()" style="padding:5px 10px; border-radius:4px; background:#444; color:#fff; border:none;">Админка</button>
@@ -122,5 +122,17 @@
     };
   </script>
   <script src="script.js?v=43"></script>
+
+  <div id="preloader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:white;z-index:9999;display:flex;align-items:center;justify-content:center;font-size:24px;">
+    Загрузка...
+  </div>
+  <script>
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("preloader").style.display = "none";
+      }, 1500);
+    });
+  </script>
 </body>
+
 </html>

@@ -84,6 +84,7 @@ function toggleAdminLogin() {
   if (login === "qwertyxyry" && pass === "Qrtx5237") {
     isAdmin = true;
     localStorage.setItem("ozon_is_admin", "true");
+    location.reload();
     document.getElementById("adminPanel").style.display = "block";
       loadEmployeesAndPoints();
   }
@@ -361,3 +362,10 @@ function refreshData() {
   alert("Данные успешно обновлены!");
 }
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    changeMonth(-1); // Назад
+    setTimeout(() => changeMonth(1), 200); // Вперёд, с задержкой
+  }, 1600);
+});

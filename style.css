@@ -2,17 +2,33 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: #121212;
+  
+  background: linear-gradient(135deg, #007bff, #e83e8c, #6610f2, #00c4ff);
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease-in-out infinite;
+
   color: #fff;
 }
 .topbar {
-  background: rgba(0, 20, 50, 0.9);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+  
   padding: 15px;
   font-size: 20px;
   font-weight: bold;
   text-align: center;
 }
 .container {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
   padding: 20px;
 }
 select, button {
@@ -36,8 +52,12 @@ button:hover {
   gap: 5px;
 }
 .day-cell {
-  background: #1f1f2f;
-  padding: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+padding: 10px;
   border-radius: 6px;
   min-height: 80px;
   font-size: 14px;
@@ -52,12 +72,24 @@ button:hover {
   float: right;
 }
 .rules-block {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
   background: rgba(100, 0, 0, 0.2);
   padding: 20px;
   margin-top: 40px;
   border-radius: 10px;
 }
 .contacts-block {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
   background: rgba(0, 100, 0, 0.2);
   padding: 20px;
   margin-top: 20px;
@@ -88,7 +120,13 @@ pre, p {
 }
 
 .bank-block {
-  background: rgba(100, 100, 0, 0.15);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+  background: rgba(0, 100, 0, 0.2);
   padding: 20px;
   margin-top: 20px;
   border-radius: 10px;
@@ -117,4 +155,61 @@ pre, p {
 .bank-remove {
   color: red;
   cursor: pointer;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+.version {
+  font-size: 12px;
+  float: left;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+
+
+
+
+.payment-block > div {
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+
+#bankList li {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-block {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+  background: rgba(100, 0, 0, 0.2);
+  padding: 20px;
+  margin-top: 40px;
+  border-radius: 10px;
 }
