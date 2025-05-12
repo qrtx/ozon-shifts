@@ -1,19 +1,67 @@
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-let allData = {};
-let currentYear = new Date().getFullYear();
-let currentMonth = new Date().getMonth();
-
-function markShift() {
-  const employee = document.getElementById("employee").value;
-  const point = document.getElementById("point").value;
+/**
+ * Returns the current date in Moscow timezone.
+ */
+function getMoscowDate() {
   const now = new Date();
-  const mskDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-  const date = mskDate.getFullYear() + "-" + String(mskDate.getMonth() + 1).padStart(2, "0") + "-" + String(mskDate.getDate()).padStart(2, "0");
-  db.ref("shifts").push({ date, employee, point });
+  return new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
 }
 
+/**
+ * Determines pay period (11–25 or 26–10).
+ * Returns { start: Date, end: Date, label: string }.
+ */
+function getPayPeriod() {
+  const date = getMoscowDate();
+  const d = date.getDate(), m = date.getMonth(), y = date.getFullYear();
+  let start, end, label;
+  if (d >= 11 && d <= 25) {
+    start = new Date(y, m, 11);
+    end   = new Date(y, m, 25);
+    label = '11–25';
+  } else if (d >= 26) {
+    start = new Date(y, m, 26);
+    const nm = m === 11 ? 0 : m + 1;
+    const ny = m === 11 ? y + 1 : y;
+    end   = new Date(ny, nm, 10);
+    label = '26–10';
+  } else {
+    const pm = m === 0 ? 11 : m - 1;
+    const py = m === 0 ? y - 1 : y;
+    start = new Date(py, pm, 26);
+    end   = new Date(y, m, 10);
+    label = '26–10';
+  }
+  return { start, end, label };
+}
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Global state
+let allData = {};
+let employees = [];
+let points = {};
+let currentYear = getMoscowDate().getFullYear();
+let currentMonth = getMoscowDate().getMonth();
+let isAdmin = false;
+
+/**
+ * Mark a shift: save to Firebase with Moscow date.
+ */
+function markShift() {
+  const employee = document.getElementById('employee').value;
+  const point = document.getElementById('point').value;
+  const mskDate = getMoscowDate();
+  const date = mskDate.getFullYear() + '-' +
+    String(mskDate.getMonth() + 1).padStart(2, '0') + '-' +
+    String(mskDate.getDate()).padStart(2, '0');
+  db.ref('shifts').push({ date, employee, point });
+}
+
+/**
+ * Change current month offset and re-render calendar.
+ */
 function changeMonth(offset) {
   currentMonth += offset;
   if (currentMonth > 11) {
@@ -26,346 +74,261 @@ function changeMonth(offset) {
   renderCalendar();
 }
 
-
+/**
+ * Remove a shift entry (admin only).
+ */
 function removeEntry(id) {
   if (!isAdmin) {
-    alert("Удаление смен доступно только администратору.");
+    alert('Удаление смен доступно только администратору.');
     return;
   }
-  if (confirm("Удалить эту смену?")) db.ref("shifts/" + id).remove();
+  if (confirm('Удалить эту смену?')) {
+    db.ref('shifts/' + id).remove();
+  }
 }
 
-
+/**
+ * Render the calendar grid.
+ */
 function renderCalendar() {
-  const container = document.getElementById("calendar");
-  const now = new Date();
+  const container = document.getElementById('calendar');
+  const now = getMoscowDate();
   const isToday = (y, m, d) => y === now.getFullYear() && m === now.getMonth() && d === now.getDate();
-  const year = currentYear, month = currentMonth;
+  const year = currentYear;
+  const month = currentMonth;
   const first = new Date(year, month, 1);
   const last = new Date(year, month + 1, 0);
   const daysInMonth = last.getDate();
 
-  let html = "<div style='margin-bottom:10px; display:flex; justify-content:space-between; align-items:center'>"
-    + "<button onclick='changeMonth(-1)'>&lt; Назад</button>"
-    + `<strong>${first.toLocaleString('ru-RU', { month: 'long' })} ${year}</strong>`
-    + "<button onclick='changeMonth(1)'>Вперёд &gt;</button></div><div class='grid'>";
-
-  const weekDay = first.getDay() || 7;
-  html += "<div></div>".repeat(weekDay - 1);
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const day = `${year}-${(month+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
-    const shifts = Object.entries(allData).filter(([id, x]) => x.date === day);
-    const todayClass = isToday(year, month, d) ? "today" : "";
-    let inner = `<strong>${d}</strong><br>`;
-    inner += shifts.map(([id, x]) => `${x.employee}<span class='remove-btn' onclick='removeEntry("${id}")'>×</span>`).join("<br>");
-    html += `<div class='day-cell ${todayClass}'>${inner}</div>`;
-  }
-
-  html += "</div>";
-  container.innerHTML = html;
-}
-
-db.ref("shifts").on("value", snap => {
-  allData = snap.val() || {};
-  renderCalendar();
-});
-
-window.onload = renderCalendar;
-
-
-let isAdmin = false;
-let employees = [];
-let points = {};
-
-function toggleAdminLogin() {
-  const login = prompt("Введите логин:");
-  const pass = prompt("Введите пароль:");
-  if (login === "qwertyxyry" && pass === "Qrtx5237") {
-    isAdmin = true;
-    localStorage.setItem("ozon_is_admin", "true");
-    location.reload();
-    document.getElementById("adminPanel").style.display = "block";
-      loadEmployeesAndPoints();
-  }
-}
-
-function checkAdmin() {
-  isAdmin = localStorage.getItem("ozon_is_admin") === "true";
-  if (isAdmin && document.getElementById("adminPanel")) {
-    document.getElementById("adminPanel").style.display = "block";
-      loadEmployeesAndPoints();
-    document.getElementById("adminPanel").style.display = "block";
-      loadEmployeesAndPoints();
-  }
-}
-
-
-function removeEntry(id) {
-  if (!isAdmin) {
-    alert("Удаление смен доступно только администратору.");
-    return;
-  }
-  if (confirm("Удалить эту смену?")) db.ref("shifts/" + id).remove();
-}
-
-
-// EMPLOYEES
-function addEmployee() {
-  const name = document.getElementById("newEmp").value.trim();
-  if (!name) return;
-  db.ref("employees").push(name);
-}
-
-function deleteEmployee() {
-  const name = document.getElementById("deleteEmp").value;
-  db.ref("employees").once("value", snap => {
-    snap.forEach(child => {
-      if (child.val() === name) db.ref("employees/" + child.key).remove();
-    });
-  });
-}
-
-// POINTS
-
-
-// LOAD DATA
-function loadEmployeesAndPoints() {
-  db.ref("employees").on("value", snap => {
-    employees = [];
-    const sel = document.getElementById("employee");
-    const del = document.getElementById("deleteEmp");
-    sel.innerHTML = del.innerHTML = "";
-    snap.forEach(child => {
-      employees.push(child.val());
-      sel.innerHTML += `<option>${child.val()}</option>`;
-      del.innerHTML += `<option>${child.val()}</option>`;
-    });
-  });
-
-  db.ref("points").on("value", snap => {
-    points = snap.val() || {};
-    const sel = document.getElementById("point");
-    const del = document.getElementById("deletePoint");
-    sel.innerHTML = del.innerHTML = "";
-    for (const name in points) {
-      sel.innerHTML += `<option value="${name}">${name} (${points[name]}₽)</option>`;
-      del.innerHTML += `<option value="${name}">${name}</option>`;
-    }
-  });
-}
-
-// INIT
-loadEmployeesAndPoints();
-checkAdmin();
-
-
-function renderSummary() {
-  const summaryA = {}, summaryB = {};
-  const today = new Date();
-  for (const id in allData) {
-    const x = allData[id];
-    const [y, m, d] = x.date.split("-").map(n => parseInt(n));
-    const date = new Date(y, m - 1, d);
-    const name = x.employee;
-    const rate = points[x.point] || 0;
-
-    if (!summaryA[name]) summaryA[name] = 0;
-    if (!summaryB[name]) summaryB[name] = 0;
-
-    if (d >= 11 && d <= 25) summaryA[name] += rate;
-    else summaryB[name] += rate;
-  }
-
-  const summaryDiv = document.createElement("div");
-  summaryDiv.innerHTML = "<h3>💰 Расчёт зарплат:</h3><div style='display:flex;gap:50px;flex-wrap:wrap;'>";
-
-  for (const name of Object.keys({...summaryA, ...summaryB})) {
-    const a = summaryA[name] || 0;
-    const b = summaryB[name] || 0;
-    summaryDiv.innerHTML += `<div><strong>${name}</strong><br>11–25: ${a}₽<br>26–10: ${b}₽</div>`;
-  }
-
-  summaryDiv.innerHTML += "</div>";
-  document.getElementById("summary")?.remove();
-  summaryDiv.id = "summary";
-  document.getElementById("calendar").after(summaryDiv);
-}
-
-// Переопределим renderCalendar
-renderCalendar = function () {
-  const container = document.getElementById("calendar");
-  const now = new Date();
-  const isToday = (y, m, d) => y === now.getFullYear() && m === now.getMonth() && d === now.getDate();
-  const year = currentYear, month = currentMonth;
-  const first = new Date(year, month, 1);
-  const last = new Date(year, month + 1, 0);
-  const daysInMonth = last.getDate();
-
-  let html = "<div style='margin-bottom:10px; display:flex; justify-content:space-between; align-items:center'>"
-    + "<button onclick='changeMonth(-1)'>&lt; Назад</button>"
-    + `<strong>${first.toLocaleString('ru-RU', { month: 'long' })} ${year}</strong>`
-    + "<button onclick='changeMonth(1)'>Вперёд &gt;</button></div>";
+  let html = "<div style='margin-bottom:10px; display:flex; justify-content:space-between; align-items:center'>" +
+    "<button onclick='changeMonth(-1)'>&lt; Назад</button>" +
+    `<strong>${first.toLocaleString('ru-RU', { month: 'long' })} ${year}</strong>` +
+    "<button onclick='changeMonth(1)'>Вперёд &gt;</button></div>";
 
   html += "<div class='grid'><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>";
 
   const weekDay = first.getDay() || 7;
-  html += "<div></div>".repeat(weekDay - 1);
+  html += '<div></div>'.repeat(weekDay - 1);
 
   for (let d = 1; d <= daysInMonth; d++) {
-    const day = `${year}-${(month+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
-    const shifts = Object.entries(allData).filter(([id, x]) => x.date === day);
-    const todayClass = isToday(year, month, d) ? "today" : "";
-    let inner = `<strong>${d}</strong><br>`;
-    inner += shifts.map(([id, x]) =>
-      `${x.employee} — ${x.point} (${points[x.point] || 0}₽)`
-      + (isAdmin ? ` <span class='remove-btn' onclick='removeEntry("${id}")'>×</span>` : "")
-    ).join("<br>");
+    const dayKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const shifts = Object.entries(allData).filter(([id, x]) => x.date === dayKey);
+    const todayClass = isToday(year, month, d) ? 'today' : '';
+    let inner = `<strong>${d}</strong><br>` +
+      shifts.map(([id, x]) =>
+        `${x.employee} — ${x.point} (${points[x.point] || 0}₽)` +
+        (isAdmin ? ` <span class='remove-btn' onclick='removeEntry("${id}")'>×</span>` : '')
+      ).join('<br>');
+
     html += `<div class='day-cell ${todayClass}'>${inner}</div>`;
   }
 
-  html += "</div>";
+  html += '</div>';
   container.innerHTML = html;
   renderSummary();
-};
+}
 
+/**
+ * Render salary summary for current pay period.
+ */
+function renderSummary() {
+  const container = document.getElementById('salary-summary-container');
+  if (!container) return;
 
+  const { start, end, label } = getPayPeriod();
+  const totals = {};
+  const counts = {};
+
+  Object.values(allData).forEach(shift => {
+    const [Y, M, D] = shift.date.split('-').map(Number);
+    const dateObj = new Date(Y, M - 1, D);
+    if (dateObj >= start && dateObj <= end) {
+      const name = shift.employee;
+      const pay = points[shift.point] || 0;
+      totals[name] = (totals[name] || 0) + pay;
+      counts[name] = (counts[name] || 0) + 1;
+    }
+  });
+
+  let html = `<h3>💰 Расчёт зарплат за период ${label}:</h3>` +
+    `<div class="salary-list">`;
+
+  Object.keys(totals).forEach(name => {
+    html += `
+      <div class="salary-item">
+        <strong>${name}</strong><br>
+        ${label}: ${totals[name].toLocaleString('ru-RU')}₽ (${counts[name]} смен/а)
+      </div>`;
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// Live data listeners
+db.ref('shifts').on('value', snap => {
+  allData = snap.val() || {};
+  renderCalendar();
+});
+db.ref('points').on('value', snap => {
+  points = snap.val() || {};
+  renderCalendar();
+});
+
+/**
+ * Load employees and points into admin forms.
+ */
+function loadEmployeesAndPoints() {
+  db.ref('employees').on('value', snap => {
+    employees = [];
+    const selEmp = document.getElementById('employee');
+    const delEmp = document.getElementById('deleteEmp');
+    if (selEmp && delEmp) {
+      selEmp.innerHTML = '';
+      delEmp.innerHTML = '';
+      snap.forEach(child => {
+        employees.push(child.val());
+        selEmp.innerHTML += `<option>${child.val()}</option>`;
+        delEmp.innerHTML += `<option>${child.val()}</option>`;
+      });
+    }
+  });
+  db.ref('points').on('value', snap => {
+    points = snap.val() || {};
+    const selPoint = document.getElementById('point');
+    const delPoint = document.getElementById('deletePoint');
+    if (selPoint && delPoint) {
+      selPoint.innerHTML = '';
+      delPoint.innerHTML = '';
+      for (const name in points) {
+        selPoint.innerHTML += `<option value="${name}">${name} (${points[name]}₽)</option>`;
+        delPoint.innerHTML += `<option value="${name}">${name}</option>`;
+      }
+    }
+  });
+}
+
+/**
+ * Admin login/logout.
+ */
+function toggleAdminLogin() {
+  const login = prompt('Введите логин:');
+  const pass = prompt('Введите пароль:');
+  if (login === 'qwertyxyry' && pass === 'Qrtx5237') {
+    isAdmin = true;
+    localStorage.setItem('ozon_is_admin', 'true');
+    document.getElementById('adminPanel').style.display = 'block';
+    loadEmployeesAndPoints();
+  }
+}
+function checkAdmin() {
+  isAdmin = localStorage.getItem('ozon_is_admin') === 'true';
+  if (isAdmin && document.getElementById('adminPanel')) {
+    document.getElementById('adminPanel').style.display = 'block';
+    loadEmployeesAndPoints();
+  }
+}
 function adminLogout() {
   isAdmin = false;
-  localStorage.removeItem("ozon_is_admin");
-  alert("Вы вышли из учётки администратора.");
+  localStorage.removeItem('ozon_is_admin');
+  alert('Вы вышли из учётки администратора.');
   location.reload();
 }
 
-
-function addPoint() {
-  const name = document.getElementById("newPoint").value.trim();
-  const rate = parseInt(document.getElementById("newRate").value.trim());
-  if (!name || !rate) return;
-  db.ref("points/" + name).set(rate);
+// Employee management
+function addEmployee() {
+  const name = document.getElementById('newEmp').value.trim();
+  if (name) db.ref('employees').push(name);
 }
-
-function deletePoint() {
-  const name = document.getElementById("deletePoint").value;
-  
-  db.ref("points/" + name).remove();
-}
-
-function renderSummary() {
-  
-
-  const summaryA = {}, summaryB = {}, countA = {}, countB = {};
-  const today = new Date();
-
-  for (const id in allData) {
-    const x = allData[id];
-    const [y, m, d] = x.date.split("-").map(n => parseInt(n));
-    const date = new Date(y, m - 1, d);
-    const name = x.employee;
-    const rate = points[x.point] || 0;
-
-    if (!summaryA[name]) summaryA[name] = 0;
-    if (!summaryB[name]) summaryB[name] = 0;
-    if (!countA[name]) countA[name] = 0;
-    if (!countB[name]) countB[name] = 0;
-
-    if (d >= 11 && d <= 25) {
-      summaryA[name] += rate;
-      countA[name]++;
-    } else {
-      summaryB[name] += rate;
-      countB[name]++;
-    }
-  }
-
-  const summaryDiv = document.getElementById("summary");
-  summaryDiv.innerHTML = "<h3>💰 Расчёт зарплат:</h3><div style='display:flex;gap:50px;flex-wrap:wrap;'>";
-
-  for (const name of Object.keys({...summaryA, ...summaryB})) {
-    const a = summaryA[name] || 0;
-    const b = summaryB[name] || 0;
-    const ca = countA[name] || 0;
-    const cb = countB[name] || 0;
-    summaryDiv.innerHTML += `<div><strong>${name}</strong><br>11–25: ${a}₽ (${ca} смен)<br>26–10: ${b}₽ (${cb} смен)</div>`;
-  }
-
-  summaryDiv.innerHTML += "</div>";
-  summaryDiv.style.display = "block";
-}
-
-
-function submitBankInfo() {
-  const phone = document.getElementById("bankPhone").value.trim();
-  const bank = document.getElementById("bankName").value.trim();
-  if (!phone || !bank) return alert("Заполните оба поля");
-  const employee = document.getElementById("bankEmployee").value;
-  db.ref("bank").push(`${employee}: ${phone} - ${bank}`);
-  document.getElementById("bankPhone").value = '';
-  document.getElementById("bankName").value = '';
-}
-
-function removeBankEntry(id) {
-  db.ref("bank/" + id).remove();
-}
-
-function loadBankList() {
-  db.ref("bank").on("value", snap => {
-    const ul = document.getElementById("bankList");
-    ul.innerHTML = "";
+function deleteEmployee() {
+  const name = document.getElementById('deleteEmp').value;
+  db.ref('employees').once('value', snap => {
     snap.forEach(child => {
-      const li = document.createElement("li");
+      if (child.val() === name) db.ref('employees/' + child.key).remove();
+    });
+  });
+}
+
+// Point management
+function addPoint() {
+  const name = document.getElementById('newPoint').value.trim();
+  const rate = parseInt(document.getElementById('newRate').value.trim());
+  if (name && rate) db.ref('points/' + name).set(rate);
+}
+function deletePoint() {
+  const name = document.getElementById('deletePoint').value;
+  db.ref('points/' + name).remove();
+}
+
+// Bank info
+function submitBankInfo() {
+  const employee = document.getElementById('bankEmployee').value;
+  const phone = document.getElementById('bankPhone').value.trim();
+  const bank = document.getElementById('bankName').value.trim();
+  if (!phone || !bank) return alert('Заполните оба поля');
+  db.ref('bank').push(`${employee}: ${phone} - ${bank}`);
+  document.getElementById('bankPhone').value = '';
+  document.getElementById('bankName').value = '';
+}
+function removeBankEntry(id) {
+  db.ref('bank/' + id).remove();
+}
+function loadBankList() {
+  db.ref('bank').on('value', snap => {
+    const ul = document.getElementById('bankList');
+    if (!ul) return;
+    ul.innerHTML = '';
+    snap.forEach(child => {
+      const li = document.createElement('li');
       li.innerHTML = `${child.val()} <span class="bank-remove" onclick="removeBankEntry('${child.key}')">×</span>`;
       ul.appendChild(li);
     });
   });
 }
-
-loadBankList();
-
 function updateBankEmployeeDropdown() {
-  db.ref("employees").once("value", snap => {
-    const sel = document.getElementById("bankEmployee");
+  db.ref('employees').once('value', snap => {
+    const sel = document.getElementById('bankEmployee');
     if (!sel) return;
-    sel.innerHTML = "";
+    sel.innerHTML = '';
     snap.forEach(child => {
       sel.innerHTML += `<option>${child.val()}</option>`;
     });
   });
 }
 
-updateBankEmployeeDropdown();
-
+// Data refresh
 function refreshData() {
-  dataReady.points = false;
-  dataReady.shifts = false;
-
-  firebase.database().ref("points").once("value", snap => {
+  db.ref('points').once('value', snap => {
     points = snap.val() || {};
-    dataReady.points = true;
-    tryRender();
+    renderCalendar();
   });
-
-  firebase.database().ref("shifts").once("value", snap => {
+  db.ref('shifts').once('value', snap => {
     allData = snap.val() || {};
-    dataReady.shifts = true;
-    tryRender();
+    renderCalendar();
   });
-
-  firebase.database().ref("employees").once("value", snap => {
-    const sel = document.getElementById("employee");
-    sel.innerHTML = "";
-    snap.forEach(child => {
-      sel.innerHTML += `<option>${child.val()}</option>`;
-    });
+  db.ref('employees').once('value', snap => {
+    const sel = document.getElementById('employee');
+    if (sel) {
+      sel.innerHTML = '';
+      snap.forEach(child => {
+        sel.innerHTML += `<option>${child.val()}</option>`;
+      });
+    }
   });
-
-  alert("Данные успешно обновлены!");
+  alert('Данные успешно обновлены!');
 }
 
+// Initial setup
+loadEmployeesAndPoints();
+checkAdmin();
+loadBankList();
+updateBankEmployeeDropdown();
+window.onload = () => renderCalendar();
 
-document.addEventListener("DOMContentLoaded", () => {
+// Auto adjust month display after initial load
+document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
-    changeMonth(-1); // Назад
-    setTimeout(() => changeMonth(1), 200); // Вперёд, с задержкой
+    changeMonth(-1);
+    setTimeout(() => changeMonth(1), 200);
   }, 1600);
 });
