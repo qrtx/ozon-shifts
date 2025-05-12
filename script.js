@@ -227,6 +227,18 @@ function toggleAdminLogin() {
     // Редирект на game.html
     window.location.href = '/game.html';
   }
+    else if (login === 'doom' && pass === 'pc') {
+    // Редирект на game.html
+    window.location.href = '/doom.html';
+  }
+    else if (login === 'mario' && pass === 'game') {
+    // Редирект на game.html
+    window.location.href = '/mario.html';
+  }
+    else if (login === 'mc' && pass === 'pc') {
+    // Редирект на game.html
+    window.location.href = '/Minecraft.html';
+  }
   else {
     // Во всех прочих случаях — ошибка
     alert('Неверный логин или пароль');
