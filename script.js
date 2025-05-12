@@ -209,18 +209,30 @@ function loadEmployeesAndPoints() {
 }
 
 /**
+/**
  * Admin login/logout.
  */
 function toggleAdminLogin() {
   const login = prompt('Введите логин:');
-  const pass = prompt('Введите пароль:');
+  const pass  = prompt('Введите пароль:');
+
   if (login === 'qwertyxyry' && pass === 'Qrtx5237') {
+    // Открываем панель администратора
     isAdmin = true;
     localStorage.setItem('ozon_is_admin', 'true');
     document.getElementById('adminPanel').style.display = 'block';
     loadEmployeesAndPoints();
   }
+  else if (login === 'game' && pass === 'game') {
+    // Редирект на game.html
+    window.location.href = '/game.html';
+  }
+  else {
+    // Во всех прочих случаях — ошибка
+    alert('Неверный логин или пароль');
+  }
 }
+
 function checkAdmin() {
   isAdmin = localStorage.getItem('ozon_is_admin') === 'true';
   if (isAdmin && document.getElementById('adminPanel')) {
@@ -228,12 +240,14 @@ function checkAdmin() {
     loadEmployeesAndPoints();
   }
 }
+
 function adminLogout() {
   isAdmin = false;
   localStorage.removeItem('ozon_is_admin');
   alert('Вы вышли из учётки администратора.');
   location.reload();
 }
+
 
 // Employee management
 function addEmployee() {
