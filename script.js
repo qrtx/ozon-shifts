@@ -310,7 +310,9 @@ function loadBankList() {
     ul.innerHTML = '';
     snap.forEach(child => {
       const li = document.createElement('li');
-      li.innerHTML = `${child.val()} <span class="bank-remove" onclick="removeBankEntry('${child.key}')">×</span>`;
+      const v = child.val();
+li.innerHTML = `${child.key}: ${v.phone} - ${v.bank} <span class="bank-remove" onclick="removeBankEntry('${child.key}')">×</span>`;
+
       ul.appendChild(li);
     });
   });
