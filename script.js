@@ -314,16 +314,16 @@ function loadBankList() {
   let text = "";
 
   if (typeof v === "string") {
-    text = v;
+    text = `${child.key}: ${v}`;
   } else if (typeof v === "object" && v !== null) {
-    text = `${v.phone || "—"} - ${v.bank || "—"}`;
+    text = `${child.key}: ${v.phone || "—"} - ${v.bank || "—"}`;
   } else {
-    text = "неизвестный формат";
+    text = `${child.key}: неизвестный формат`;
   }
 
   li.innerHTML = `${text} <span class="bank-remove" onclick="removeBankEntry('${child.key}')">×</span>`;
   ul.appendChild(li);
-   });
+});
   });
 }
 function updateBankEmployeeDropdown() {
