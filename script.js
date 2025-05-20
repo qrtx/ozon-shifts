@@ -309,12 +309,21 @@ function loadBankList() {
     if (!ul) return;
     ul.innerHTML = '';
     snap.forEach(child => {
-      const li = document.createElement('li');
-      const v = child.val();
-li.innerHTML = `${child.key}: ${v.phone} - ${v.bank} <span class="bank-remove" onclick="removeBankEntry('${child.key}')">×</span>`;
+  const li = document.createElement('li');
+  const v = child.val();
+  let text = "";
 
-      ul.appendChild(li);
-    });
+  if (typeof v === "string") {
+    text = v;
+  } else if (typeof v === "object" && v !== null) {
+    text = `${v.phone || "—"} - ${v.bank || "—"}`;
+  } else {
+    text = "неизвестный формат";
+  }
+
+  li.innerHTML = `${text} <span class="bank-remove" onclick="removeBankEntry('${child.key}')">×</span>`;
+  ul.appendChild(li);
+   });
   });
 }
 function updateBankEmployeeDropdown() {
