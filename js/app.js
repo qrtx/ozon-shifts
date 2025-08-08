@@ -72,18 +72,20 @@
         cell.innerHTML = `<div class="text-xs mb-1">${d.getDate()}</div>`;
 
         const daily = Array.isArray(shifts[iso]) ? shifts[iso] : [];
-        if (daily.length) {
-          const ul = document.createElement('ul');
-          ul.style.fontSize = '11px';
-          ul.style.lineHeight = '1.2';
-          daily.forEach(s => {
-            if (!s) return;
-            const li = document.createElement('li');
-            li.textContent = `${s.name || '—'} — ${s.point || ''}`;
-            ul.appendChild(li);
-          });
-          cell.appendChild(ul);
-        }
+if (daily.length){
+  const ul = document.createElement('ul');
+  ul.className = 'vlist';              // вертикальный контейнер
+  daily.forEach(s => {
+    if (!s) return;
+    const li = document.createElement('li');
+    li.className = 'vitem';            // вертикальная «пилюля»
+    li.textContent = `${s.name || '—'} — ${s.point || ''}`;
+    li.title = li.textContent;         // подсказка по ховеру
+    ul.appendChild(li);
+  });
+  cell.appendChild(ul);
+}
+
 
         if (iso === new Date().toISOString().slice(0,10)) cell.classList.add('active');
         cal.appendChild(cell);
