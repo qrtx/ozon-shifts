@@ -17,28 +17,19 @@ body{background:linear-gradient(180deg,#f6fbff,#fff 40%,#eef6ff)}
 .tabbar button.active{outline:2px solid rgba(43,133,255,.4)}
 #calendar .cell{min-height:110px;border-radius:16px;padding:8px;font-size:12px;background:var(--glass-bg);backdrop-filter:blur(20px) saturate(170%);-webkit-backdrop-filter:blur(20px) saturate(170%);box-shadow:var(--glass-shadow),var(--glass-inset)}
 #calendar .cell.active{outline:2px solid rgba(43,133,255,.5)}
-/* вертикальный список смен в ячейке */
-.cell .vlist{
-  display:flex;
-  gap:8px;
-  height:100%;
-  overflow:hidden;
-}
-
-/* каждая смена — «пилюля» вертикально */
-.cell .vitem{
+.cell .vtext{
   display: block;
-  writing-mode: rotate(-90deg); /* вертикальное направление */
-  text-orientation: bottom left;   /* нормальные буквы */
+  writing-mode: vertical-rl; /* вертикальное направление */
+  text-orientation: mixed;   /* нормальные буквы */
   font-size: clamp(9px, 2.2vw, 12px); /* адаптив */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* на очень узких телефонах ещё компактней */
 @media (max-width: 380px){
   .cell .vtext{
     font-size: clamp(8px, 2.8vw, 11px);
   }
 }
+
