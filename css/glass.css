@@ -27,17 +27,18 @@ body{background:linear-gradient(180deg,#f6fbff,#fff 40%,#eef6ff)}
 
 /* каждая смена — «пилюля» вертикально */
 .cell .vitem{
-  transform: rotate(-90deg); /* вертикальное письмо сверху вниз */
-  transform-origin: bottom left;  /* русские буквы читаемы, не «по буквам» */
-  /* адаптивный шрифт: от 9px до 12px, в зависимости от ширины экрана */
-  font-size: clamp(9px, 2.2vw, 12px);
-  max-height: 100%;
+  display: block;
+  writing-mode: rotate(-90deg); /* вертикальное направление */
+  text-orientation: bottom left;   /* нормальные буквы */
+  font-size: clamp(9px, 2.2vw, 12px); /* адаптив */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #171a21;
 }
 
 /* на очень узких телефонах ещё компактней */
 @media (max-width: 380px){
-  .cell .vitem{ font-size: clamp(8px, 2.8vw, 11px); padding: 5px 6px; }
+  .cell .vtext{
+    font-size: clamp(8px, 2.8vw, 11px);
+  }
 }
