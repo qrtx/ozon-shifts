@@ -20,7 +20,6 @@ body{background:linear-gradient(180deg,#f6fbff,#fff 40%,#eef6ff)}
 /* вертикальный список смен в ячейке */
 .cell .vlist{
   display:flex;
-  align-items:flex-end;      /* прижать к низу дня */
   gap:8px;
   height:100%;
   overflow:hidden;
@@ -28,16 +27,8 @@ body{background:linear-gradient(180deg,#f6fbff,#fff 40%,#eef6ff)}
 
 /* каждая смена — «пилюля» вертикально */
 .cell .vitem{
-  writing-mode: vertical-rl; /* вертикальное письмо сверху вниз */
-  text-orientation: mixed;   /* русские буквы читаемы, не «по буквам» */
-  white-space: nowrap;
-  line-height: 1;
-  padding: 6px 8px;
-  border-radius: 12px;
-  backdrop-filter: blur(6px) saturate(120%);
-  background: rgba(255,255,255,.28);
-  box-shadow: 0 1px 0 rgba(255,255,255,.4) inset,
-              0 6px 18px rgba(20,30,60,.18);
+  transform: rotate(-90deg); /* вертикальное письмо сверху вниз */
+  transform-origin: bottom left;  /* русские буквы читаемы, не «по буквам» */
   /* адаптивный шрифт: от 9px до 12px, в зависимости от ширины экрана */
   font-size: clamp(9px, 2.2vw, 12px);
   max-height: 100%;
