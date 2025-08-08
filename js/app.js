@@ -73,18 +73,15 @@
 
         const daily = Array.isArray(shifts[iso]) ? shifts[iso] : [];
 if (daily.length){
-  const ul = document.createElement('ul');
-  ul.className = 'vlist';              // вертикальный контейнер
   daily.forEach(s => {
     if (!s) return;
-    const li = document.createElement('li');
-    li.className = 'vitem';            // вертикальная «пилюля»
-    li.textContent = `${s.name || '—'} — ${s.point || ''}`;
-    li.title = li.textContent;         // подсказка по ховеру
-    ul.appendChild(li);
+    const span = document.createElement('span');
+    span.className = 'vtext';
+    span.textContent = `${s.name || '—'} — ${s.point || ''}`;
+    cell.appendChild(span);
   });
-  cell.appendChild(ul);
 }
+
 
 
         if (iso === new Date().toISOString().slice(0,10)) cell.classList.add('active');
