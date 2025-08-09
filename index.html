@@ -17,13 +17,10 @@
     /* Page transition + initial reveal */
     body { opacity: 0; transition: opacity .35s ease; }
     body.ready { opacity: 1; }
-    .page { 
-      display: block; opacity: 0; transform: translateY(8px);
-      pointer-events: none; transition: opacity .22s ease, transform .24s ease;
-      will-change: opacity, transform;
-    }
-    .page.hidden-soft { display:none; } /* fallback if JS toggles class */
-    .page.active { opacity: 1; transform: none; pointer-events: auto; }
+    .page{display:none;opacity:0;transform:translateY(8px);pointer-events:none;}
+    .page.hidden-soft{display:none;} /* fallback if JS toggles class */
+    .page.active{display:block;opacity:1;transform:none;pointer-events:auto;animation:fadeUp .24s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
     .badge{ font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,.35); }
     #calendar{ min-height: 420px; }
   </style>
@@ -142,10 +139,41 @@
           </div>
         </div>
       </section>
-    </main>
+    
+      <section id="page-supplies" class="page glass p-4 sm:p-5 hidden-soft">
+        <header class="mb-3 flex items-center justify-between">
+          <h2 class="text-base sm:text-lg font-semibold">Заказ расходников</h2>
+          <span class="text-xs text-gray-600">#supplies</span>
+        </header>
+
+        <div class="glass-ink rounded-2xl p-3 sm:p-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <select id="supEmployee" class="glass-ink rounded-xl px-3 py-3 focus:ring-2 focus:ring-brand-500">
+              <option value="">Сотрудник</option>
+            </select>
+            <select id="supPoint" class="glass-ink rounded-xl px-3 py-3 focus:ring-2 focus:ring-brand-500">
+              <option value="">ПВЗ</option>
+            </select>
+          </div>
+
+          <div id="supChecklist" class="grid grid-cols-1 sm:grid-cols-2 gap-2 my-3"></div>
+
+          <button id="createSupplyReq" class="glass-ink rounded-xl px-4 py-3 font-semibold">Создать заявку</button>
+        </div>
+
+        <h3 class="mt-4 text-sm font-semibold text-gray-700">Заявки</h3>
+        <div id="supRequestsList" class="grid grid-cols-1 gap-2 mt-2"></div>
+      </section>
+
+</main>
   </div>
 
-  <nav class="tabbar">
+  
+  <!-- Floating action button for Supplies (visible on checkin only) -->
+  <div id="suppliesFab" class="fixed left-0 right-0 z-[999] px-4 sm:px-5" style="bottom:80px; display:none;">
+    <button id="openSupplies" class="glass-ink w-full rounded-2xl px-4 py-4 font-semibold text-base">Заказать расходники</button>
+  </div>
+<nav class="tabbar">
     <div class="wrap">
       <button data-page="checkin" class="active">Отметка</button>
       <button data-page="calendar">Календарь</button>

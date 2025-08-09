@@ -14,6 +14,7 @@ const mockDB = (()=> {
     requisites: {},
     admins: [{name:'Андрей', handle:'@andrey', phone:'+7 900 000-00-00'}],
     rules: '<ul><li>Не покидать ПВЗ вне перерывов</li><li>Не размещать КГТ в клиентской зоне</li></ul>',
+    supplyRequests: [] ,
     shifts: {} // 'YYYY-MM-DD' : [{name, point}]
   };
   const KEY='mockDB_v1';
@@ -38,6 +39,15 @@ const mockDB = (()=> {
     async getRequisites(){ return load().requisites },
     async saveRequisite(n, phone, bank){ const db=load(); db.requisites[n]={phone, bank}; save(db); },
     async deleteRequisite(n){ const db=load(); delete db.requisites[n]; save(db); },
+
+    async addSupplyRequest({employeeName, pointName, items}){
+      const db=load(); const id = String(Date.now())+Math.random().toString(36).slice(2,7);
+      db.supplyRequests = db.supplyRequests||[];
+      db.supplyRequests.push({id, employeeName, pointName, items, status:'open', createdAt: Date.now()});
+      save(db); return id;
+    },
+    async getSupplyRequests(){ const db=load(); return db.supplyRequests||[]; },
+    async closeSupplyRequest(id){ const db=load(); (db.supplyRequests||[]).forEach(r=>{ if(r.id===id){ r.status='closed'; r.closedAt=Date.now(); r.closedBy='Система'; r.closedByName='Система'; } }); save(db); },
 
     async getRules(){ return load().rules },
     async getAdmins(){ return load().admins },
@@ -76,7 +86,8 @@ const P = {
   points    : 'points',     // { "МО_ХИМКИ_89": 2666, ... }
   shifts    : 'shifts',     // { "<pushId>": { date:"YYYY-MM-DD", employee:"Имя", point:"ПВЗ" } }
   meta      : 'meta',       // может отсутствовать
-  admins    : 'admins'      // может отсутствовать
+  admins    : 'admins',     // может отсутствовать
+  supplyRequests : 'supplyRequests'
 };
 
 const toISO = (d) => {
@@ -183,6 +194,21 @@ const rtdb = {
     const snap = await get(ref(db, P.admins));
     const v = snap.val() || {};
     return Array.isArray(v) ? v.filter(Boolean) : Object.values(v);
+  },
+
+    async addSupplyRequest({employeeName, pointName, items}){
+    const payload = { employeeName, pointName, items, status:'open', createdAt: Date.now() };
+    const refPush = await set(push(ref(db, P.supplyRequests)), payload).then(()=>null).catch(()=>null);
+  },
+  async getSupplyRequests(){
+    const snap = await get(ref(db, P.supplyRequests));
+    const v = snap.val() || {};
+    const list = Array.isArray(v) ? v.filter(Boolean) : Object.entries(v).map(([id, r])=>({ id, ...(r||{}) }));
+    return list;
+  },
+  async closeSupplyRequest(id){
+    const now = Date.now(); const who = 'Система';
+    await update(child(ref(db, P.supplyRequests), id), { status:'closed', closedAt: now, closedBy: who, closedByName: who });
   },
 
   // простая «авторизация»

@@ -1,22 +1,29 @@
-// js/app.js — UI + навигация + рендер
-(function () {
-  const $ = (s, c = document) => c.querySelector(s);
-  const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+;(() => {
+  'use strict';
+  const $  = (s, c=document) => c.querySelector(s);
+  const $$ = (s, c=document) => Array.from(c.querySelectorAll(s));
 
   // ---------- Навигация с анимацией ----------
-  const tabs = $$('.tabbar button'), pages = $$('.page');
-  function show(page) {
+  let tabs = [];
+  let pages = [];
+  function _scrollToTop(){
+    try{
+      const target = document.scrollingElement || document.documentElement || document.body;
+      target.scrollTop = 0; document.body.scrollTop = 0; window.scrollTo(0,0);
+    }catch{}
+  }
+  function show(page){
     pages.forEach(p => {
       const active = (p.id === 'page-' + page);
       p.classList.toggle('active', active);
-      p.classList.toggle('hidden-soft', !active);
     });
     tabs.forEach(b => b.classList.toggle('active', b.dataset.page === page));
-    localStorage.setItem('activePage', page);
+    try{ localStorage.setItem('activePage', page); }catch{}
+    _scrollToTop();
   }
-  tabs.forEach(b => b.addEventListener('click', () => show(b.dataset.page)));
-  show(localStorage.getItem('activePage') || 'checkin');
 
+  // инициализируем ссылки на элементы после загрузки DOM
+  
   // ---------- Заполнение списков ----------
   async function refreshEmployees() {
     const list = await DB.getEmployees();
@@ -28,27 +35,20 @@
       if (bankEmp) bankEmp.append(new Option(n, n));
     });
   }
-
   async function refreshPoints() {
     const list = await DB.getPoints();
     const sel = $('#point'); if (!sel) return;
     sel.innerHTML = '<option value="">ПВЗ</option>';
     (list || []).forEach(p => sel.append(new Option(p, p)));
   }
-
-  // ---------- Отметка ----------
-  const checkinBtn = $('#btn-checkin');
-  if (checkinBtn) checkinBtn.addEventListener('click', async () => {
-    const name = $('#employee').value, point = $('#point').value;
-    if (!name || !point) return alert('Выбери сотрудника и ПВЗ');
-    await DB.markShift({ name, point, date: new Date() });
-    const s = $('#checkinStatus');
-    if (s) s.textContent = `Отмечено: ${name} @ ${point} • ${new Date().toLocaleString('ru-RU')}`;
-    renderCalendar(currentYear, currentMonth);
-    refreshPayroll();
+document.addEventListener('DOMContentLoaded', () => {
+    tabs  = $$('.tabbar button');
+    pages = $$('.page');
+    tabs.forEach(b => b.addEventListener('click', () => show(b.dataset.page)));
+    try{ localStorage.setItem('activePage','checkin'); }catch{}
+    show('checkin');
   });
 
-  // ---------- Календарь ----------
   const monthTitle = $('#monthTitle'), cal = $('#calendar');
   let today = new Date(); let currentYear = today.getFullYear(), currentMonth = today.getMonth();
 
@@ -270,6 +270,111 @@
     const adminPage = $('#page-admin');
     if (adminPage) adminPage.classList.toggle('hidden', !admin);
   }
+  // ---------- Расходники ----------
+  const SUPPLY_ITEMS = [
+    {id:'bags', label:'Брендированные пакеты'},
+    {id:'tape', label:'Скотч'},
+    {id:'knife', label:'Нож (целиком)'},
+    {id:'blades', label:'Лезвия для ножа'},
+    {id:'paper', label:'Бумага'},
+    {id:'toilet', label:'Туалетная бумага'},
+    {id:'freshener', label:'Освежитель для воздуха'},
+    {id:'safepacks', label:'Сейфпакеты'},
+    {id:'barcodes', label:'Наклейки со штрихкодами'},
+    {id:'markers', label:'Маркеры'},
+  ];
+
+  function renderSuppliesChecklist(){
+    const box = $('#supChecklist'); if (!box) return;
+    box.innerHTML = SUPPLY_ITEMS.map(it=>`
+      <label class="flex items-center gap-2 glass-ink rounded-xl px-3 py-2">
+        <input type="checkbox" value="${it.id}"/>
+        <span>${it.label}</span>
+      </label>
+    `).join('');
+  }
+  async function refreshSuppliesSelectors(){
+    const [emps, points] = await Promise.all([DB.getEmployees(), DB.getPoints()]);
+    const eSel = $('#supEmployee'), pSel = $('#supPoint');
+    if (eSel){
+      eSel.innerHTML = '<option value="">Сотрудник</option>' + (emps||[]).map(n=>`<option value="${n}">${n}</option>`).join('');
+    }
+    if (pSel){
+      pSel.innerHTML = '<option value="">ПВЗ</option>' + (points||[]).map(n=>`<option value="${n}">${n}</option>`).join('');
+    }
+  }
+  function supplyItemsToLabels(items){
+    const map = Object.fromEntries(SUPPLY_ITEMS.map(i=>[i.id,i.label]));
+    return (items||[]).map(id=>map[id]||id);
+  }
+  function fmtDate(ts){
+    try{ const d = new Date(ts); return d.toLocaleString('ru-RU'); } catch{ return String(ts); }
+  }
+  async function loadSupplyRequests(){
+    const box = $('#supRequestsList'); if (!box) return;
+    const list = await DB.getSupplyRequests();
+    (list||[]).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    box.innerHTML = (list||[]).map(r=>{
+      const labels = supplyItemsToLabels(r.items);
+      const closed = r.status==='closed';
+      return `
+        <div class="glass-ink rounded-2xl p-3 flex items-start justify-between gap-3 ${closed?'opacity-60':''}" data-id="${r.id||''}">
+          <div>
+            <div class="text-xs text-gray-600">${fmtDate(r.createdAt)} · ${r.employeeName} · ${r.pointName}</div>
+            <div class="mt-1">${labels.map(l=>`<span class="inline-block text-xs px-2 py-1 rounded-lg bg-white/50 mr-1 mb-1">${l}</span>`).join('')}</div>
+            ${closed && r.closedBy ? `<div class="text-xs text-gray-500 mt-1">Закрыто: ${fmtDate(r.closedAt)} · ${r.closedByName||r.closedBy}</div>`:''}
+          </div>
+          <button class="glass-ink px-2 py-1 rounded-lg text-sm" data-close ${closed?'disabled':''}>✕</button>
+        </div>
+      `;
+    }).join('');
+
+    box.querySelectorAll('[data-close]:not([disabled])').forEach(btn=>{
+      btn.addEventListener('click', async (e)=>{
+        const card = e.target.closest('[data-id]');
+        const id = card?.dataset.id;
+        if (!id) return;
+        try{ await DB.closeSupplyRequest(id); await loadSupplyRequests(); }
+        catch(err){ console.error(err); alert('Не удалось закрыть заявку'); }
+      });
+    });
+  }
+  async function createSupplyRequest(){
+    const eSel = $('#supEmployee'), pSel = $('#supPoint');
+    const items = $$('#supChecklist input[type="checkbox"]:checked').map(i=>i.value);
+    if (!eSel?.value) return alert('Выбери сотрудника');
+    if (!pSel?.value) return alert('Выбери ПВЗ');
+    if (!items.length) return alert('Отметь хотя бы один расходник');
+    await DB.addSupplyRequest({ employeeName: eSel.value, pointName: pSel.value, items });
+    // reset
+    eSel.value=''; pSel.value=''; $$('#supChecklist input[type="checkbox"]').forEach(i=>i.checked=false);
+    await loadSupplyRequests();
+  }
+  function initSuppliesPage(){
+    renderSuppliesChecklist();
+    refreshSuppliesSelectors();
+    const btn = $('#createSupplyReq'); if (btn) btn.addEventListener('click', createSupplyRequest);
+    loadSupplyRequests();
+  }
+
+  // Floating button + routing
+  const suppliesFab = $('#suppliesFab');
+  /* INIT FAB VIS */
+  try {
+    const current = localStorage.getItem('activePage') || 'checkin';
+    if (suppliesFab) suppliesFab.style.display = (current==='checkin') ? 'block' : 'none';
+  } catch {}
+
+  $('#openSupplies')?.addEventListener('click', ()=> show('supplies'));
+
+  const _show = show;
+  show = function(page){
+    _show(page);
+    if (suppliesFab) suppliesFab.style.display = (page==='checkin') ? 'block' : 'none';
+    if (page==='supplies') initSuppliesPage();
+   _scrollToTop(); };
+
+
 
   // ---------- init ----------
   async function init() {
@@ -279,6 +384,8 @@
     await refreshPayroll();
     await refreshReqs();
     await loadRules(); await loadAdmins();
+    try { document.body.classList.add('ready'); } catch(e) {}
+  
   }
 
   // если DB уже есть — стартуем сразу, иначе ждём событие от data.js
