@@ -391,54 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // если DB уже есть — стартуем сразу, иначе ждём событие от data.js
   if (window.DB) init();
   else window.addEventListener('DB_READY', init, { once: true });
-
-  // ---------- CHECKIN ----------
-const btnCheckin = document.getElementById('btn-checkin');
-
-if (btnCheckin) {
-  btnCheckin.addEventListener('click', async () => {
-    const employeeSelect = document.getElementById('employeeSelect');
-const pointSelect = document.getElementById('pointSelect');
-const status = document.getElementById('checkinStatus');
-
-const name = employeeSelect.value;
-const point = pointSelect.value;
-
-if (!name) {
-  status.textContent = 'Выберите сотрудника';
-  return;
-}
-
-if (!point) {
-  status.textContent = 'Выберите пункт';
-  return;
-}
-
-try {
-  const rateSnapshot = await firebase.database()
-    .ref('points/' + point)
-    .once('value');
-
-  const rate = rateSnapshot.val() || 0;
-
-  const today = new Date().toISOString().slice(0, 10);
-
-  await firebase.database()
-    .ref('shifts/' + today)
-    .push({
-      name: name,
-      point: point,
-      rate: rate,
-      timestamp: Date.now()
-    });
-
-  status.textContent = `Смена добавлена: ${name}`;
-  renderCalendar();
-
-} catch (e) {
-  console.error(e);
-  status.textContent = 'Ошибка при сохранении';
-}
   });
 }
 })();
