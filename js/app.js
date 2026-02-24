@@ -392,50 +392,46 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.DB) init();
   else window.addEventListener('DB_READY', init, { once: true });
 
-  // ---------- CHECKIN ----------
-const btnCheckin = document.getElementById('btn-checkin');
+const employeeSelect = document.getElementById('employeeSelect');
+const pointSelect = document.getElementById('pointSelect');
+const status = document.getElementById('checkinStatus');
 
-if (btnCheckin) {
-  btnCheckin.addEventListener('click', async () => {
-    const status = document.getElementById('checkinStatus');
-    const employeeSelect = document.getElementById('employee');
+const name = employeeSelect.value;
+const point = pointSelect.value;
 
-    if (!employeeSelect || !employeeSelect.value) {
-      status.textContent = 'Выберите сотрудника';
-      return;
-    }
+if (!name) {
+  status.textContent = 'Выберите сотрудника';
+  return;
+}
 
-    const name = employeeSelect.value;
-    const today = new Date();
-    const iso = today.toISOString().slice(0, 10);
+if (!point) {
+  status.textContent = 'Выберите пункт';
+  return;
+}
 
-    try {
-      const employee = await DB.getEmployee(name);
-      if (!employee) {
-        status.textContent = 'Сотрудник не найден';
-        return;
-      }
+try {
+  const rateSnapshot = await firebase.database()
+    .ref('points/' + point)
+    .once('value');
 
-      const shift = {
-        name: name,
-        rate: employee.rate || 0,
-        date: iso,
-        timestamp: Date.now()
-      };
+  const rate = rateSnapshot.val() || 0;
 
-      await DB.addShift(iso, shift);
+  const today = new Date().toISOString().slice(0, 10);
 
-      status.textContent = `Смена добавлена: ${name}`;
-      
-      // обновляем календарь / расчёты
-      if (typeof renderCalendar === 'function') {
-        renderCalendar();
-      }
+  await firebase.database()
+    .ref('shifts/' + today)
+    .push({
+      name: name,
+      point: point,
+      rate: rate,
+      timestamp: Date.now()
+    });
 
-    } catch (e) {
-      console.error(e);
-      status.textContent = 'Ошибка при сохранении';
-    }
-  });
+  status.textContent = `Смена добавлена: ${name}`;
+  renderCalendar();
+
+} catch (e) {
+  console.error(e);
+  status.textContent = 'Ошибка при сохранении';
 }
 })();
