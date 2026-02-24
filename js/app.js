@@ -391,5 +391,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // если DB уже есть — стартуем сразу, иначе ждём событие от data.js
   if (window.DB) init();
   else window.addEventListener('DB_READY', init, { once: true });
-  });
 })();
