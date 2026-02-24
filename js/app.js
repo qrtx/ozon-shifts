@@ -391,4 +391,51 @@ document.addEventListener('DOMContentLoaded', () => {
   // если DB уже есть — стартуем сразу, иначе ждём событие от data.js
   if (window.DB) init();
   else window.addEventListener('DB_READY', init, { once: true });
+
+  // ---------- CHECKIN ----------
+const btnCheckin = document.getElementById('btn-checkin');
+
+if (btnCheckin) {
+  btnCheckin.addEventListener('click', async () => {
+    const status = document.getElementById('checkinStatus');
+    const employeeSelect = document.getElementById('employeeSelect');
+
+    if (!employeeSelect || !employeeSelect.value) {
+      status.textContent = 'Выберите сотрудника';
+      return;
+    }
+
+    const name = employeeSelect.value;
+    const today = new Date();
+    const iso = today.toISOString().slice(0, 10);
+
+    try {
+      const employee = await DB.getEmployee(name);
+      if (!employee) {
+        status.textContent = 'Сотрудник не найден';
+        return;
+      }
+
+      const shift = {
+        name: name,
+        rate: employee.rate || 0,
+        date: iso,
+        timestamp: Date.now()
+      };
+
+      await DB.addShift(iso, shift);
+
+      status.textContent = `Смена добавлена: ${name}`;
+      
+      // обновляем календарь / расчёты
+      if (typeof renderCalendar === 'function') {
+        renderCalendar();
+      }
+
+    } catch (e) {
+      console.error(e);
+      status.textContent = 'Ошибка при сохранении';
+    }
+  });
+}
 })();
