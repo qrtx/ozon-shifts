@@ -392,7 +392,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.DB) init();
   else window.addEventListener('DB_READY', init, { once: true });
 
-const employeeSelect = document.getElementById('employeeSelect');
+  // ---------- CHECKIN ----------
+const btnCheckin = document.getElementById('btn-checkin');
+
+if (btnCheckin) {
+  btnCheckin.addEventListener('click', async () => {
+    const employeeSelect = document.getElementById('employeeSelect');
 const pointSelect = document.getElementById('pointSelect');
 const status = document.getElementById('checkinStatus');
 
@@ -433,5 +438,7 @@ try {
 } catch (e) {
   console.error(e);
   status.textContent = 'Ошибка при сохранении';
+}
+  });
 }
 })();
