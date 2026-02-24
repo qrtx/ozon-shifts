@@ -398,7 +398,7 @@ const btnCheckin = document.getElementById('btn-checkin');
 if (btnCheckin) {
   btnCheckin.addEventListener('click', async () => {
     const status = document.getElementById('checkinStatus');
-    const employeeSelect = document.getElementById('employeeSelect');
+    const employeeSelect = document.getElementById('employee');
 
     if (!employeeSelect || !employeeSelect.value) {
       status.textContent = 'Выберите сотрудника';
