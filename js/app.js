@@ -392,5 +392,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.DB) init();
   else window.addEventListener('DB_READY', init, { once: true });
   });
-}
 })();
